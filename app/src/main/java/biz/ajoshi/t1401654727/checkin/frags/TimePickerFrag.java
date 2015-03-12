@@ -7,7 +7,6 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -16,16 +15,12 @@ import java.util.Calendar;
  * Created by aditya on 6/1/2014.
  */
 public class TimePickerFrag extends DialogFragment
-            implements TimePickerDialog.OnTimeSetListener {
+        implements TimePickerDialog.OnTimeSetListener {
 
-    TextView callingView;
+    public static final String ARG_VIEW_ID = "biz.ajoshi.t1401654727.checkin.frags.TimePickerFrag.viewId";
 
     public TimePickerFrag() {
         super();
-    }
-
-    public TimePickerFrag(TextView view) {
-        callingView = view;
     }
 
     @Override
@@ -39,25 +34,22 @@ public class TimePickerFrag extends DialogFragment
                 DateFormat.is24HourFormat(getActivity()));
     }
 
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        // Do something with the time chosen by the user
+        Activity callingActivity = getActivity();
+        if (callingActivity != null) {
+            ((OnTimeSetListener) callingActivity).OnTimeSet(getArguments().getInt(ARG_VIEW_ID), hourOfDay, minute);
+        } else {
+            Log.e("SWCheckin", "Activity was null!");
+        }
+    }
+
+
     /**
      * Interface used to get data back from this frag
      */
     public interface OnTimeSetListener {
-        public void OnTimeSet(TextView view, int hour, int minute);
-    }
-
-
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        // Do something with the time chosen by the user
-        if(callingView != null) {
-            callingView.setText("");
-        }
-        Activity callingActivity = getActivity();
-        if (callingActivity != null) {
-            ((OnTimeSetListener) callingActivity).OnTimeSet(callingView, hourOfDay, minute);
-        } else {
-            Log.e("SWCheckin", "Activity was null!");
-        }
+        public void OnTimeSet(int viewId, int hour, int minute);
     }
 }
 

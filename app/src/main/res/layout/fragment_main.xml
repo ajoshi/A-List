@@ -1,5 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,18 +11,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.ajoshi.t1401654727.checkin.MainActivity.AddNewFlightFragment">
-
     <EditText
         android:id="@+id/firstName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/input_hint_firstname"
+        android:hint="@string/input_hint_firstname"
         />
     <EditText
         android:id="@+id/lastName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/input_hint_lastname"
+        android:hint="@string/input_hint_lastname"
         />
     <EditText
         android:id="@+id/confNum"
@@ -36,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/input_hint_departure_date"
-        style="@android:style/Widget.DeviceDefault.Light.Spinner"
+        style="@style/FakeSpinners"
         android:onClick="pickDate"
         android:inputType="datetime" />
     <TextView
@@ -44,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/input_hint_departure_time"
-        style="@android:style/Widget.DeviceDefault.Light.Spinner"
+        style="@style/FakeSpinners"
         android:onClick="pickTime"
         android:inputType="datetime" />
     </LinearLayout>
@@ -57,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/input_hint_return_date"
-        style="@android:style/Widget.DeviceDefault.Light.Spinner"
+        style="@style/FakeSpinners"
         android:onClick="pickDate"
         android:inputType="datetime"
         />
@@ -65,10 +67,22 @@
         android:id="@+id/returnTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/input_hint_departure_time"
-        style="@android:style/Widget.DeviceDefault.Light.Spinner"
+        android:text="@string/input_hint_return_dtime"
+        style="@style/FakeSpinners"
         android:onClick="pickTime" />
         </LinearLayout>
+    <EditText
+        android:id="@+id/departLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:hint="@string/input_hint_origin_airport" />
+    <EditText
+        android:id="@+id/arriveLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:hint="@string/input_hint_destination_airport"/>
     <Button
         android:id="@+id/submit"
         android:layout_width="wrap_content"
@@ -76,3 +90,4 @@
         android:text="@string/btn_check_in"
         android:onClick="createReminder"/>
 </LinearLayout>
+</ScrollView>

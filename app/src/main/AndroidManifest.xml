@@ -26,7 +26,7 @@
         </provider>
 
         <service
-            android:name="biz.ajoshi.t1401654727.checkin.services.SWQuerier"
+            android:name=".services.SWCheckinService"
             android:exported="false" >
         </service>
     </application>

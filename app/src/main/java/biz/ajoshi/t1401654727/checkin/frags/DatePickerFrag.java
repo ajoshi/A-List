@@ -7,7 +7,6 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.DatePicker;
-import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -17,14 +16,10 @@ import java.util.Calendar;
 public class DatePickerFrag extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    TextView callingView;
+    public static final String ARG_VIEW_ID = "biz.ajoshi.t1401654727.checkin.frags.DatePickerFrag.viewId";
 
     public DatePickerFrag() {
         super();
-    }
-
-    public DatePickerFrag(TextView view) {
-        callingView = view;
     }
 
     @Override
@@ -39,21 +34,21 @@ public class DatePickerFrag extends DialogFragment
         return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
-    /**
-     * Interface used to get data back from this frag
-     */
-    public interface OnDateSetListener {
-        public void OnDateSet(TextView view, int year, int month, int day);
-    }
-
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         Activity callingActivity = getActivity();
         if (callingActivity != null) {
-            ((OnDateSetListener) callingActivity).OnDateSet(callingView, year, month, day);
+            ((OnDateSetListener) callingActivity).OnDateSet(getArguments().getInt(ARG_VIEW_ID), year, month, day);
         } else {
-            Log.e("SWCheckin","Activity was null!");
+            Log.e("SWCheckin", "Activity was null!");
         }
+    }
+
+    /**
+     * Interface used to get data back from this frag
+     */
+    public interface OnDateSetListener {
+        public void OnDateSet(int viewId, int year, int month, int day);
     }
 }
 
