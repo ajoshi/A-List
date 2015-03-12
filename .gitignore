@@ -24,3 +24,11 @@ proguard/
 
 # Log Files
 *.log
+
+
+###IntelliJ###
+
+*.iml
+*.ipr
+*.iws
+.idea/
