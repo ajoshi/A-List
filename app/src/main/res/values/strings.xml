@@ -25,7 +25,7 @@
     <string name="notification_text_small">Boarding Position %s</string>
     <string name="notification_failure_title">Unable to check in</string>
     <string name="notification_failure_text">Unable to check in to a flight. Please check the app</string>
-    <string name="notification_has_gate">at gate %s</string>
+    <string name="notification_has_gate"> at gate %s</string>
     <string name="unable_to_set_timer_toast">Unable to set timer!</string>
     <string name="empty_flight_list">You have no upcoming flights</string>
     <string name="flight_list_origin_to_dest">%1$s → %2$s</string>

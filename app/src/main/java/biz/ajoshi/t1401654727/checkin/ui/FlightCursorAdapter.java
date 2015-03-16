@@ -14,7 +14,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import biz.ajoshi.t1401654727.checkin.Contants;
+import biz.ajoshi.t1401654727.checkin.Constants;
 import biz.ajoshi.t1401654727.checkin.R;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 
@@ -103,10 +103,10 @@ public class FlightCursorAdapter extends CursorAdapter {
             // shouldn't exist- should have been cleared by the cleanup, but just in case!
             holder.bg.setBackgroundColor(res.getColor(android.R.color.black));
         } else {
-            if (time - currentTime <= Contants.MS_IN_THREE_HOURS) {
+            if (time - currentTime <= Constants.MS_IN_THREE_HOURS) {
                 // three hours to go.
                 holder.bg.setBackgroundColor(res.getColor(android.R.color.holo_red_light));
-            } else if (time - currentTime <= Contants.MS_IN_DAY) {
+            } else if (time - currentTime <= Constants.MS_IN_DAY) {
                 // flight is in a day
                 holder.bg.setBackgroundColor(res.getColor(android.R.color.darker_gray));
             }

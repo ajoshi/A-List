@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
                 new String[]{MyDBHelper.COL_TIME, MyDBHelper.COL_FNAME,
                         MyDBHelper.COL_LNAME, MyDBHelper.COL_CONF_CODE, MyDBHelper.COL_ID},
                 MyDBHelper.COL_DONE + "=? AND " + MyDBHelper.COL_ATTEMPTS + "<?",
-                new String[]{"0", String.valueOf(Contants.MAX_TRIES_FOR_CHECKIN)}, null);
+                new String[]{"0", String.valueOf(Constants.MAX_TRIES_FOR_CHECKIN)}, null);
         if (c != null) {
             if (c.moveToFirst()) {
                 setAlarm(ctx, c.getLong(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4));
@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getService(ctx, 0,
                 SWCheckinService.IntentForCheckingIn(ctx, fName, lName, cCode, id), PendingIntent.FLAG_UPDATE_CURRENT);
-        long alarmTime = time - Contants.MS_IN_DAY;
+        long alarmTime = time - Constants.MS_IN_DAY;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             // if less than kitkat, use the old one
             am.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);

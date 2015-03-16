@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import biz.ajoshi.t1401654727.checkin.Contants;
+import biz.ajoshi.t1401654727.checkin.Constants;
 import biz.ajoshi.t1401654727.checkin.R;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
@@ -230,9 +230,9 @@ public class SWCheckinService extends IntentService {
         if (entryForThisFlight != null && entryForThisFlight.getCount() == 1 && entryForThisFlight.moveToFirst()) {
             int attempts = entryForThisFlight.getInt(0);
             entryForThisFlight.close();
-            if (attempts++ < Contants.MAX_TRIES_FOR_CHECKIN) {
+            if (attempts++ < Constants.MAX_TRIES_FOR_CHECKIN) {
                 long nextAttemptTime = Calendar.getInstance().getTimeInMillis() +
-                        Contants.MS_IN_DAY + (attempts * MS_IN_MINUTE);
+                        Constants.MS_IN_DAY + (attempts * MS_IN_MINUTE);
 
                 // if we haven't tried too much, try again. else we let it drop eventually.
                 ContentValues cv = new ContentValues();
