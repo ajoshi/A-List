@@ -135,6 +135,7 @@ public class SWCheckinService extends IntentService {
     /**
      * Get the content for the next HTML tag in the stream
      * eg, if stream is at "&lt;a&gt;hi&lt;b&gt;>Bob&lt;/b&gt;&lt;/a&gt;", returns hi
+     *
      * @param is InputStream to get data from
      * @return Document content for the next tag
      * @throws IOException

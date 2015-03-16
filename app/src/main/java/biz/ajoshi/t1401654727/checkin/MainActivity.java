@@ -339,6 +339,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         getFlightFrag().updateTimeView(viewId, hour, minute);
     }
 
+    @Override
+    public void OnDateSet(int viewId, int year, int month, int day) {
+        getFlightFrag().updateDateView(viewId, year, month, day);
+    }
+
     /**
      * Refreshed the flight list frag so the user can see updates
      */
@@ -367,11 +372,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      */
     private AddNewFlightFragment getFlightFrag() {
         return (AddNewFlightFragment) findFragmentByPosition(0);
-    }
-
-    @Override
-    public void OnDateSet(int viewId, int year, int month, int day) {
-        getFlightFrag().updateDateView(viewId, year, month, day);
     }
 
     /**
