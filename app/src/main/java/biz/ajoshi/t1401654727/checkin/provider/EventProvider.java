@@ -86,7 +86,7 @@ public class EventProvider extends ContentProvider {
             if (selectFirst) {
                 return db.query(MyDBHelper.EVENT_TABLE_NAME, projection, selection, selectionArgs, null, null, MyDBHelper.COL_TIME, "1");
             } else if (lastPathSegment != null) {
-                return db.query(MyDBHelper.EVENT_TABLE_NAME, projection, MyDBHelper.COL_ID+"=?", new String[] {lastPathSegment}, null, null, MyDBHelper.COL_TIME);
+                return db.query(MyDBHelper.EVENT_TABLE_NAME, projection, MyDBHelper.COL_ID + "=?", new String[]{lastPathSegment}, null, null, MyDBHelper.COL_TIME);
             }
             return db.query(MyDBHelper.EVENT_TABLE_NAME, projection, selection, selectionArgs, null, null, MyDBHelper.COL_TIME);
         }
