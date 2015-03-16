@@ -216,29 +216,32 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         String origin = getTextViewValueById(R.id.departLoc);
         String destination = getTextViewValueById(R.id.arriveLoc);
 
-        addReminderToDB(departMillis, firstName, lastName, confirmationCode, origin, destination);
-        if (returnMillis > departMillis) {
-            // Only add a return flight if it's after the departure
-            // This lets us make sure that we don't set a reminder if there is no return
-            addReminderToDB(returnMillis, firstName, lastName, confirmationCode, destination, origin);
-            // Check in alarm set for flight at %s on %s and return at %3$s on %4$s
-            Toast.makeText(this, getString(R.string.entry_added_multiple_toast,
-                            getTextViewValueById(R.id.departureTime),
-                            getTextViewValueById(R.id.departureDate),
-                            getTextViewValueById(R.id.returnTime),
-                            getTextViewValueById(R.id.returnDate)),
-                    Toast.LENGTH_LONG).show();
-        } else {
-            // Check in alarm set for flight at %s on %s
-            Toast.makeText(this, getString(R.string.entry_added_toast,
-                            getTextViewValueById(R.id.departureTime),
-                            getTextViewValueById(R.id.departureDate)),
-                    Toast.LENGTH_LONG).show();
-        }
+        if (addReminderToDB(departMillis, firstName, lastName, confirmationCode, origin, destination)) {
+            if (returnMillis > departMillis) {
+                // Only add a return flight if it's after the departure
+                // This lets us make sure that we don't set a reminder if there is no return
+                addReminderToDB(returnMillis, firstName, lastName, confirmationCode, destination, origin);
+                // Check in alarm set for flight at %s on %s and return at %3$s on %4$s
+                Toast.makeText(this, getString(R.string.entry_added_multiple_toast,
+                                getTextViewValueById(R.id.departureTime),
+                                getTextViewValueById(R.id.departureDate),
+                                getTextViewValueById(R.id.returnTime),
+                                getTextViewValueById(R.id.returnDate)),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                // Check in alarm set for flight at %s on %s
+                Toast.makeText(this, getString(R.string.entry_added_toast,
+                                getTextViewValueById(R.id.departureTime),
+                                getTextViewValueById(R.id.departureDate)),
+                        Toast.LENGTH_LONG).show();
+            }
 
-        //reset the frag
-        refreshFlightListFrag();
-        resetAlarm(this);
+            //reset the frag
+            refreshFlightListFrag();
+            resetAlarm(this);
+        } else {
+           Toast.makeText(this, R.string.entry_not_added_toast, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -248,10 +251,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      * @param firstName first name
      * @param lastName  last name
      * @param confCode  confirmation code
+     * @return true if succeeded, false otherwise
      */
-    private void addReminderToDB(long time, String firstName, String lastName, String confCode) {
+    private boolean addReminderToDB(long time, String firstName, String lastName, String confCode) {
         if (firstName == null || lastName == null || confCode == null) {
-            return;
+            return false;
         }
 
         ContentValues cv = new ContentValues();
@@ -260,6 +264,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         cv.put(MyDBHelper.COL_CONF_CODE, confCode);
         cv.put(MyDBHelper.COL_TIME, time);
         getContentResolver().insert(EventProvider.AUTH_URI, cv);
+        return true;
     }
 
     /**
@@ -271,14 +276,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      * @param confCode     confirmation code
      * @param flightSource City from which the flight originates
      * @param flightDest   City where the flight lands
+     * @return true if succeeded, false otherwise
      */
-    private void addReminderToDB(long time, String firstName, String lastName, String confCode, String flightSource, String flightDest) {
+    private boolean addReminderToDB(long time, String firstName, String lastName, String confCode, String flightSource, String flightDest) {
         if (firstName == null || lastName == null || confCode == null) {
-            return;
+            return false;
         }
         if (flightSource == null || flightDest == null) {
-            addReminderToDB(time, firstName, lastName, confCode);
-            return;
+            return addReminderToDB(time, firstName, lastName, confCode);
         }
         ContentValues cv = new ContentValues();
         cv.put(MyDBHelper.COL_FNAME, firstName);
@@ -288,6 +293,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         cv.put(MyDBHelper.COL_FROM_PLACE, flightSource);
         cv.put(MyDBHelper.COL_DEST_PLACE, flightDest);
         getContentResolver().insert(EventProvider.AUTH_URI, cv);
+        return true;
     }
 
     /**

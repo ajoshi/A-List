@@ -17,8 +17,9 @@
     <string name="input_hint_destination_airport">Destination Airport</string>
     <string name="title_add_new_flight">Add Flight</string>
     <string name="btn_check_in">Check in</string>
-    <string name="entry_added_toast">Check in alarm set for flight at %1$s on %2$s</string>
-    <string name="entry_added_multiple_toast">Check in alarm set for flight at %1$s on %2$s and return at %3$s on %4$s</string>
+    <string name="entry_added_toast">Ready to check in for flight at %1$s on %2$s</string>
+    <string name="entry_added_multiple_toast">Ready to check in for flight at %1$s on %2$s and return at %3$s on %4$s</string>
+    <string name="entry_not_added_toast">Could not set checkin alarm: Please enter full name and confirmation code</string>
     <string name="notification_title">Checked in to SouthWest</string>
     <!-- Aditya Joshi checked in to Southwest flight from LAx to LAS with boarding position A1 at gate C3 -->
     <string name="notification_big_text">%1$s %2$s checked in to Southwest flight from %3$s to %4$s with boarding position %5$s at gate %6$s</string>
