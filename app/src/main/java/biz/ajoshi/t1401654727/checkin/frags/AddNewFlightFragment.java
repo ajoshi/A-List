@@ -171,12 +171,12 @@ public class AddNewFlightFragment extends Fragment {
         DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
         switch (viewId) {
             case R.id.departureTime:
-                departCal.set(Calendar.HOUR, hour);
+                departCal.set(Calendar.HOUR_OF_DAY, hour);
                 departCal.set(Calendar.MINUTE, minute);
                 view.setText(dateFormat.format(departCal.getTime()));
                 break;
             case R.id.returnTime:
-                returnCal.set(Calendar.HOUR, hour);
+                returnCal.set(Calendar.HOUR_OF_DAY, hour);
                 returnCal.set(Calendar.MINUTE, minute);
                 view.setText(dateFormat.format(returnCal.getTime()));
                 break;
