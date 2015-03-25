@@ -18,6 +18,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
     public static final String COL_TIME = "time";
     public static final String COL_DONE = "done";
     public static final String COL_GATE = "gate";
+    public static final String COL_POSITION = "position";
     public static final String COL_FROM_PLACE = "from_place";
     public static final String COL_DEST_PLACE = "dest_place";
     public static final String COL_ATTEMPTS = "attempts";
@@ -33,10 +34,11 @@ public class MyDBHelper extends SQLiteOpenHelper {
             + COL_FROM_PLACE + " text,"
             + COL_DEST_PLACE + " text,"
             + COL_GATE + " text,"
+            + COL_POSITION + " text,"
             + COL_DONE + " integer default 0,"
             + COL_ATTEMPTS + " integer default 0);";
     private static final String DATABASE_NAME = "events.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public MyDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -51,9 +53,14 @@ public class MyDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(MyDBHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
-                        + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + EVENT_TABLE_NAME);
-        onCreate(db);
+                        + newVersion);
+        if (oldVersion == 1 && newVersion == DATABASE_VERSION) {
+            db.execSQL("ALTER TABLE " + EVENT_TABLE_NAME + " ADD " + COL_POSITION + " text");
+        } else {
+            db.execSQL("DROP TABLE IF EXISTS " + EVENT_TABLE_NAME);
+            onCreate(db);
+        }
+
     }
 
 

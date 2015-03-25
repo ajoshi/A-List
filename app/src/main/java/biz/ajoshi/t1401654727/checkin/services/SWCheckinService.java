@@ -44,7 +44,7 @@ public class SWCheckinService extends IntentService {
     private static final String EXTRA_LAST_NAME = "biz.ajoshi.t1401654727.checkin.services.extra.LNAME";
     private static final String EXTRA_CONF_CODE = "biz.ajoshi.t1401654727.checkin.services.extra.CCODE";
     private static final String EXTRA_ID = "biz.ajoshi.t1401654727.checkin.services.extra.ID";
-    private static final String SOUTHWEST_CHECKIN_URL1 = "https://www.southwest.com/flight/retrieveCheckinDoc.html?confirmationNumber=%1s&firstName=%2s&lastName=%3s";
+    public static final String SOUTHWEST_CHECKIN_URL1 = "https://www.southwest.com/flight/retrieveCheckinDoc.html?confirmationNumber=%1s&firstName=%2s&lastName=%3s";
     private static final String SOUTHWEST_CHECKIN_URL2 = "https://www.southwest.com/flight/selectPrintDocument.html?int=";
     private static final String SOUTHWEST_CHECKIN_URL3 = "https://www.southwest.com/flight/selectPrintDocument.html";
     private static final String BOARDING_GROUP_TAG_CLASS = "boarding_group";

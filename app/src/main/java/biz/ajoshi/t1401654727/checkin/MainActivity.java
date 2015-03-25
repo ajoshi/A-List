@@ -240,7 +240,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
             refreshFlightListFrag();
             resetAlarm(this);
         } else {
-           Toast.makeText(this, R.string.entry_not_added_toast, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.entry_not_added_toast, Toast.LENGTH_LONG).show();
         }
     }
 
