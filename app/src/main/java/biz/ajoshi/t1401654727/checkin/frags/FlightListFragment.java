@@ -40,7 +40,6 @@ import biz.ajoshi.t1401654727.checkin.ui.FlightCursorAdapter;
 public class FlightListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final static int LOADER_ID_LOAD_FLIGHT_LIST = 1;
-    private final static String ARG_ID_FOR_LOADER = "biz.ajoshi.t1401654727.checkin.frags.FlightListFragment.id";
 
     /**
      * The fragment's ListView.
