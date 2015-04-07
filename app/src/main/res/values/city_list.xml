@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="city_name_list">
+        <!-- Timezone and city name separated by | character -->
+        <!-- For larger lists it might be worth it to decouple the two lists, but with less than 100
+        elements, I see no real reason to do so
+         -->
+        <item>America/Aruba|Oranjestad</item>
+        <item>America/Nassau|Nassau</item>
+        <item>America/Belize|Belize City</item>
+        <item>America/Costa_Rica|San José</item>
+        <item>America/Dominica|Punta Cana</item>
+        <item>America/Jamaica|Montego Bay</item>
+        <item>Mexico/BajaSur|San José del Cabo</item>
+        <item>Mexico/General|Mexico City</item>
+        <item>Mexico/General|Puerto Vallarta</item>
+        <item>America/Cancun|Cancún</item>
+        <item>America/Puerto_Rico|San Juan</item>
+        <item>US/Central|Birmingham</item>
+        <item>US/Arizona|Phoenix</item>
+        <item>US/Arizona|Tucson</item>
+        <item>US/Central|Little Rock</item>
+        <item>US/Pacific|Burbank</item>
+        <item>US/Pacific|Los Angeles</item>
+        <item>US/Pacific|Oakland</item>
+        <item>US/Pacific|Ontario</item>
+        <item>US/Pacific|Orange County</item>
+        <item>US/Pacific|Sacramento</item>
+        <item>US/Pacific|San Diego</item>
+        <item>US/Pacific|San Francisco</item>
+        <item>US/Pacific|San Jose</item>
+        <item>US/Mountain|Denver</item>
+        <item>US/Eastern|Hartford/Springfield</item>
+        <item>US/Eastern|Fort Lauderdale</item>
+        <item>US/Eastern|Fort Myers</item>
+        <item>US/Eastern|Jacksonville</item>
+        <item>US/Eastern|Orlando</item>
+        <item>US/Eastern|Palm Beach</item>
+        <item>US/Central|Panama City</item>
+        <item>US/Central|Pensacola</item>
+        <item>US/Eastern|Tampa</item>
+        <item>US/Eastern|Atlanta</item>
+        <item>US/Mountain|Boise</item>
+        <item>US/Central|Chicago</item>
+        <item>US/Eastern|Indianapolis</item>
+        <item>US/Central|Des Moines</item>
+        <item>US/Central|Wichita</item>
+        <item>US/Eastern|Louisville</item>
+        <item>US/Central|New Orleans</item>
+        <item>US/Eastern|Portland</item>
+        <item>US/Eastern|Baltimore</item>
+        <item>US/Eastern|Boston</item>
+        <item>US/Eastern|Detroit</item>
+        <item>US/Eastern|Flint</item>
+        <item>US/Eastern|Grand Rapids</item>
+        <item>US/Central|Minneapolis/St. Paul</item>
+        <item>US/Central|Kansas City</item>
+        <item>US/Central|St. Louis</item>
+        <item>US/Central|Omaha</item>
+        <item>US/Pacific|Las Vegas</item>
+        <item>US/Pacific|Reno/Tahoe</item>
+        <item>US/Eastern|Manchester</item>
+        <item>US/Eastern|Newark</item>
+        <item>US/Mountain|Albuquerque</item>
+        <item>US/Eastern|Albany</item>
+        <item>US/Eastern|Buffalo</item>
+        <item>US/Eastern|Long Island/Islip</item>
+        <item>US/Eastern|New York City</item>
+        <item>US/Eastern|Rochester</item>
+        <item>US/Eastern|Charlotte</item>
+        <item>US/Eastern|Raleigh-Durham</item>
+        <item>US/Eastern|Akron/Canton</item>
+        <item>US/Eastern|Cleveland</item>
+        <item>US/Eastern|Columbus</item>
+        <item>US/Eastern|Dayton</item>
+        <item>US/Central|Oklahoma City</item>
+        <item>US/Central|Tulsa</item>
+        <item>US/Pacific|Portland</item>
+        <item>US/Eastern|Philadelphia</item>
+        <item>US/Eastern|Pittsburgh</item>
+        <item>US/Eastern|Providence</item>
+        <item>US/Eastern|Charleston</item>
+        <item>US/Eastern|Greenville/Spartanburg</item>
+        <item>US/Central|Memphis</item>
+        <item>US/Central|Nashville</item>
+        <item>US/Central|Amarillo</item>
+        <item>US/Central|Austin</item>
+        <item>US/Central|Corpus Christi</item>
+        <item>US/Central|Dallas</item>
+        <item>US/Mountain|El Paso</item>
+        <item>US/Central|Harlingen/South Padre Island</item>
+        <item>US/Central|Houston</item>
+        <item>US/Central|Lubbock</item>
+        <item>US/Central|Midland/Odessa</item>
+        <item>US/Central|San Antonio</item>
+        <item>US/Mountain|Salt Lake City</item>
+        <item>US/Eastern|Norfolk</item>
+        <item>US/Eastern|Richmond</item>
+        <item>US/Eastern|Washington D.C</item>
+        <item>US/Eastern|Washington D.C</item>
+        <item>US/Pacific|Seattle/Tacoma</item>
+        <item>US/Pacific|Spokane</item>
+        <item>US/Central|Milwaukee</item>
+    </string-array>
+</resources>

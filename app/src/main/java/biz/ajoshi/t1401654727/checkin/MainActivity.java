@@ -22,14 +22,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Calendar;
 
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
-import biz.ajoshi.t1401654727.checkin.frags.AddNewFlightFragment;
-import biz.ajoshi.t1401654727.checkin.frags.DatePickerFrag;
-import biz.ajoshi.t1401654727.checkin.frags.FlightListFragment;
-import biz.ajoshi.t1401654727.checkin.frags.TimePickerFrag;
+import biz.ajoshi.t1401654727.checkin.ui.frag.AddNewFlightFragment;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.DatePickerFrag;
+import biz.ajoshi.t1401654727.checkin.ui.frag.FlightListFragment;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
 import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
 
@@ -209,8 +208,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         editor.apply();
 
         //This is where I set the alarm for the service
-        long departMillis = getFlightFrag().getDepartCal().getTimeInMillis();
-        long returnMillis = getFlightFrag().getReturnCal().getTimeInMillis();
+        long departMillis = getFlightFrag().getDepartCalMillis();
+        long returnMillis = getFlightFrag().getReturnCalMillis();
 
         String confirmationCode = getTextViewValueById(R.id.confNum);
         String origin = getTextViewValueById(R.id.departLoc);
@@ -317,12 +316,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
     /**
      * Starts up a dialogfragment to choose departure/return date and sets the edittext to that
      *
-     * @param a
+     * @param dateView
      */
-    public void pickDate(View a) {
+    public void pickDate(View dateView) {
         DialogFragment newFragment = new DatePickerFrag();
         Bundle args = new Bundle();
-        args.putInt(DatePickerFrag.ARG_VIEW_ID, a.getId());
+        args.putInt(DatePickerFrag.ARG_VIEW_ID, dateView.getId());
         newFragment.setArguments(args);
         newFragment.show(getFragmentManager(), "datePicker");
     }
@@ -330,14 +329,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
     /**
      * Starts up a dialogfragment to choose departure/return time and sets the edittext to that
      *
-     * @param a
+     * @param timeView
      */
-    public void pickTime(View a) {
+    public void pickTime(View timeView) {
         Bundle args = new Bundle();
-        args.putInt(TimePickerFrag.ARG_VIEW_ID, a.getId());
-        DialogFragment newFragment = new TimePickerFrag();
-        newFragment.setArguments(args);
-        newFragment.show(getFragmentManager(), "timePicker");
+        args.putInt(TimePickerFrag.ARG_VIEW_ID, timeView.getId());
+        DialogFragment timePickerFragment = new TimePickerFrag();
+        timePickerFragment.setArguments(args);
+        timePickerFragment.show(getFragmentManager(), "timePicker");
     }
 
     @Override

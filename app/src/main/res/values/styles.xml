@@ -11,4 +11,12 @@
         <item name="android:paddingBottom">@dimen/flight_entry_fake_spinner_padding_top_bottom</item>
         <item name="android:layout_margin">@dimen/flight_entry_fake_spinner_margin</item>
     </style>
+
+    <style name="TimeZoneTextView">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="StandardEdittext">
+        <item name="android:singleLine">true</item>
+    </style>
 </resources>

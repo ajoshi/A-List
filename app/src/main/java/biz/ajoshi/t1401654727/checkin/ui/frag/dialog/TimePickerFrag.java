@@ -1,4 +1,4 @@
-package biz.ajoshi.t1401654727.checkin.frags;
+package biz.ajoshi.t1401654727.checkin.ui.frag.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,7 +17,7 @@ import java.util.Calendar;
 public class TimePickerFrag extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
-    public static final String ARG_VIEW_ID = "biz.ajoshi.t1401654727.checkin.frags.TimePickerFrag.viewId";
+    public static final String ARG_VIEW_ID = "biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag.viewId";
 
     public TimePickerFrag() {
         super();

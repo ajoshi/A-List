@@ -1,4 +1,4 @@
-package biz.ajoshi.t1401654727.checkin.frags;
+package biz.ajoshi.t1401654727.checkin.ui.frag.dialog;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -16,7 +16,7 @@ import java.util.Calendar;
 public class DatePickerFrag extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    public static final String ARG_VIEW_ID = "biz.ajoshi.t1401654727.checkin.frags.DatePickerFrag.viewId";
+    public static final String ARG_VIEW_ID = "biz.ajoshi.t1401654727.checkin.ui.frag.dialog.DatePickerFrag.viewId";
 
     public DatePickerFrag() {
         super();

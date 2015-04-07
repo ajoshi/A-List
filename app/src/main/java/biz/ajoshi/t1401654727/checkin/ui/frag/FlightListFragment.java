@@ -1,4 +1,4 @@
-package biz.ajoshi.t1401654727.checkin.frags;
+package biz.ajoshi.t1401654727.checkin.ui.frag;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,11 +39,6 @@ import biz.ajoshi.t1401654727.checkin.ui.FlightCursorAdapter;
 public class FlightListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final static int LOADER_ID_LOAD_FLIGHT_LIST = 1;
-
-    /**
-     * The fragment's ListView.
-     */
-    private AbsListView mListView;
     /**
      * The Adapter which will be used to populate the ListView with
      * Views.
@@ -77,8 +71,6 @@ public class FlightListFragment extends ListFragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_flight, container, false);
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
         TextView emptyView = (TextView) view.findViewById(android.R.id.empty);
         if (emptyView != null) {
             emptyView.setText(R.string.empty_flight_list);
