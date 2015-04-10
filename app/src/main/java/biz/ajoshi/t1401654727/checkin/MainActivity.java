@@ -10,6 +10,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -40,6 +41,8 @@ import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
  */
 public class MainActivity extends Activity implements ActionBar.TabListener, TimePickerFrag.OnTimeSetListener, DatePickerFrag.OnDateSetListener {
 
+    private final static String EXTRA_SHOW_LIST = "biz.ajoshi.t1401654727.checkin.MainActivity";
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -53,6 +56,93 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Set up the action bar.
+        final ActionBar actionBar = getActionBar();
+        // I use a Holo theme, so NPE shouldn't happen
+        // Also, I know this is deprecated; it wasn't when I put it in.
+        //TODO try to replace
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        cleanUpDB();
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // When swiping between different sections, select the corresponding
+        // tab. We can also use ActionBar.Tab#select() to do this if we have
+        // a reference to the Tab.
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
+
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+            // Create a tab with text corresponding to the page title defined by
+            // the adapter. Also specify this Activity object, which implements
+            // the TabListener interface, as the callback (listener) for when
+            // this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+        // on launch, reset alarm
+        resetAlarm(this);
+        // Now see if we were launched by notification
+        Intent i = getIntent();
+        if (i!= null && i.getBooleanExtra(EXTRA_SHOW_LIST, false)) {
+            mViewPager.setCurrentItem(SectionsPagerAdapter.INDEX_OF_FLIGHT_LIST);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            refreshFlightListFrag();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // When the given tab is selected, switch to the corresponding page in
+        // the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
 
     /**
      * Sets the single alarm we have to go off when the earliest event is scheduled for
@@ -106,93 +196,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
-        // I use a Holo theme, so NPE shouldn't happen
-        // Also, I know this is deprecated; it wasn't when I put it in.
-        //TODO try to replace
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        cleanUpDB();
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }
-        // on launch, reset alarm
-        resetAlarm(this);
-    }
-
     /**
      * Deletes old flights
      */
     public void cleanUpDB() {
         long timeNow = Calendar.getInstance().getTimeInMillis();
         getContentResolver().delete(EventProvider.AUTH_URI, MyDBHelper.COL_TIME + " < " + timeNow, null);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            refreshFlightListFrag();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
     /**
@@ -387,11 +396,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
     }
 
     /**
+     * Creates an intent that shows the flight list upon launch
+     * @param ctx Context to use to create intent
+     * @return
+     */
+    public static Intent getListIntent(Context ctx) {
+        Intent listIntent = new Intent(ctx, MainActivity.class);
+        listIntent.putExtra(EXTRA_SHOW_LIST, true);
+        return listIntent;
+    }
+
+    /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         private final static int PAGE_COUNT = 2;
+        public final static int INDEX_OF_FLIGHT_LIST = 1;
+        public final static int INDEX_OF_FLIGHT_ENTRY = 0;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -403,15 +425,15 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
             // Return a AddNewFlightFragment (defined as a static inner class below).
             Fragment frag;
             switch (position) {
-                case 0:
-                    frag = findFragmentByPosition(0);
+                case INDEX_OF_FLIGHT_ENTRY:
+                    frag = findFragmentByPosition(INDEX_OF_FLIGHT_ENTRY);
                     if (frag == null) {
                         return AddNewFlightFragment.newInstance(position + 1);
                     } else {
                         return frag;
                     }
-                case 1:
-                    frag = findFragmentByPosition(1);
+                case INDEX_OF_FLIGHT_LIST:
+                    frag = findFragmentByPosition(INDEX_OF_FLIGHT_LIST);
                     if (frag == null) {
                         return FlightListFragment.newInstance();
                     } else {

@@ -2,6 +2,7 @@ package biz.ajoshi.t1401654727.checkin.services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import biz.ajoshi.t1401654727.checkin.Constants;
+import biz.ajoshi.t1401654727.checkin.MainActivity;
 import biz.ajoshi.t1401654727.checkin.R;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
@@ -301,12 +303,12 @@ public class SWCheckinService extends IntentService {
                         .setContentTitle(getString(R.string.notification_title))
                         .setContentText(getString(R.string.notification_text_small, boardingPosition)
                                 + (gate == null ? "" : getString(R.string.notification_has_gate, gate)));
-        //TODO add destination name, etc so it's easier to figure out what we checked in to
-        // probably easier to do when I add a share feature- nobody  wants to type all that out
         if (origin != null && destination != null) {
             mBuilder.setStyle(new NotificationCompat.BigTextStyle()
                     .bigText(getString(R.string.notification_big_text, fName, lName, origin, destination, boardingPosition, gate)));
         }
+        mBuilder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0,
+                MainActivity.getListIntent(getApplicationContext()), PendingIntent.FLAG_ONE_SHOT));
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -323,6 +325,8 @@ public class SWCheckinService extends IntentService {
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(getString(R.string.notification_failure_title))
                         .setContentText(getString(R.string.notification_failure_text));
+        mBuilder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0,
+                MainActivity.getListIntent(getApplicationContext()), PendingIntent.FLAG_ONE_SHOT));
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
