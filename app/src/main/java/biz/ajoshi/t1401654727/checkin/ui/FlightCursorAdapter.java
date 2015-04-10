@@ -10,7 +10,6 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -25,6 +24,7 @@ public class FlightCursorAdapter extends CursorAdapter {
 
     LayoutInflater mInflater;
     int DB_INDEX_TIME;
+    int DB_INDEX_DISPLAY_TIME;
     int DB_INDEX_FNAME;
     int DB_INDEX_LNAME;
     int DB_INDEX_CCODE;
@@ -58,6 +58,7 @@ public class FlightCursorAdapter extends CursorAdapter {
             DB_INDEX_DONE = c.getColumnIndex(MyDBHelper.COL_DONE);
             DB_INDEX_DEST = c.getColumnIndex(MyDBHelper.COL_DEST_PLACE);
             DB_INDEX_ORIGIN = c.getColumnIndex(MyDBHelper.COL_FROM_PLACE);
+            DB_INDEX_DISPLAY_TIME = c.getColumnIndex(MyDBHelper.COL_DISPLAY_TIME);
         }
         return super.swapCursor(c);
     }
@@ -94,8 +95,7 @@ public class FlightCursorAdapter extends CursorAdapter {
         }
         cal.setTimeInMillis(time);
         if (holder.time != null) {
-            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
-            holder.time.setText(dateFormat.format(cal.getTime()));
+            holder.time.setText(cursor.getString(DB_INDEX_DISPLAY_TIME));
         }
         holder.checkbox.setVisibility(hasCheckedin ? View.VISIBLE : View.GONE);
 

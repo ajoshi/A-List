@@ -7,6 +7,7 @@ package biz.ajoshi.t1401654727.checkin;
 public class CityTimezoneTuple {
     public String city;
     public String tz;
+
     public CityTimezoneTuple(String cit, String timeZone) {
         this.city = cit;
         tz = timeZone;

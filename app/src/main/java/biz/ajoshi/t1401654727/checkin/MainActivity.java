@@ -22,15 +22,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
-import biz.ajoshi.t1401654727.checkin.ui.frag.AddNewFlightFragment;
-import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.DatePickerFrag;
-import biz.ajoshi.t1401654727.checkin.ui.frag.FlightListFragment;
-import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
 import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
+import biz.ajoshi.t1401654727.checkin.ui.frag.AddNewFlightFragment;
+import biz.ajoshi.t1401654727.checkin.ui.frag.FlightListFragment;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.DatePickerFrag;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
 
 /**
  * Main activity for this app. Holds viewpager for the various fragments
@@ -207,19 +210,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         editor.putString(AddNewFlightFragment.PREF_LAST_NAME, lastName);
         editor.apply();
 
+        AddNewFlightFragment addNewFlightFrag = getFlightFrag();
         //This is where I set the alarm for the service
-        long departMillis = getFlightFrag().getDepartCalMillis();
-        long returnMillis = getFlightFrag().getReturnCalMillis();
+        long departMillis = addNewFlightFrag.getDepartCalMillis();
+        long returnMillis = addNewFlightFrag.getReturnCalMillis();
 
         String confirmationCode = getTextViewValueById(R.id.confNum);
         String origin = getTextViewValueById(R.id.departLoc);
         String destination = getTextViewValueById(R.id.arriveLoc);
-
-        if (addReminderToDB(departMillis, firstName, lastName, confirmationCode, origin, destination)) {
+        DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault());
+        if (addReminderToDB(departMillis, firstName, lastName, confirmationCode, origin, destination, addNewFlightFrag.getDepartTimeString(dateTimeFormat))) {
             if (returnMillis > departMillis) {
                 // Only add a return flight if it's after the departure
                 // This lets us make sure that we don't set a reminder if there is no return
-                addReminderToDB(returnMillis, firstName, lastName, confirmationCode, destination, origin);
+                addReminderToDB(returnMillis, firstName, lastName, confirmationCode, destination, origin, addNewFlightFrag.getReturnTimeString(dateTimeFormat));
                 // Check in alarm set for flight at %s on %s and return at %3$s on %4$s
                 Toast.makeText(this, getString(R.string.entry_added_multiple_toast,
                                 getTextViewValueById(R.id.departureTime),
@@ -275,9 +279,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      * @param confCode     confirmation code
      * @param flightSource City from which the flight originates
      * @param flightDest   City where the flight lands
+     * @param dTime        Localized time string for display purposes
      * @return true if succeeded, false otherwise
      */
-    private boolean addReminderToDB(long time, String firstName, String lastName, String confCode, String flightSource, String flightDest) {
+    private boolean addReminderToDB(long time, String firstName, String lastName, String confCode,
+                                    String flightSource, String flightDest, String dTime) {
         if (firstName == null || lastName == null || confCode == null) {
             return false;
         }
@@ -289,6 +295,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
         cv.put(MyDBHelper.COL_LNAME, lastName);
         cv.put(MyDBHelper.COL_CONF_CODE, confCode);
         cv.put(MyDBHelper.COL_TIME, time);
+        cv.put(MyDBHelper.COL_DISPLAY_TIME, dTime);
         cv.put(MyDBHelper.COL_FROM_PLACE, flightSource);
         cv.put(MyDBHelper.COL_DEST_PLACE, flightDest);
         getContentResolver().insert(EventProvider.AUTH_URI, cv);

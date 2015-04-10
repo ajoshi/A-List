@@ -60,10 +60,13 @@ public class AddNewFlightFragment extends Fragment {
     Calendar returnCal;
     /**
      * I can't store the tz in the calendar because if I do store it in the cal, then getting a
-     * timeformat with default locale will change the display time
+     * timeformat with default locale will change the displayed time
      */
     TimeZone departTz;
     TimeZone returnTz;
+    /**
+     * Array of timezones so I can use them in the AutocompleteView's clickhandler
+     */
     final TimeZone[] timeZones = new TimeZone[2];
     static final int TZ_DEPART_INDEX = 0;
     static final int TZ_RETURN_INDEX = 1;
@@ -72,6 +75,7 @@ public class AddNewFlightFragment extends Fragment {
      * Holds City and time zone tuples for all possible destinations. Use loader if list gets too long
      */
     ArrayList<CityTimezoneTuple> tupleList;
+
     public AddNewFlightFragment() {
     }
 
@@ -119,7 +123,15 @@ public class AddNewFlightFragment extends Fragment {
     }
 
     /**
-     * Attaches the city adapter and click listener to the given AutoCompleteTextView view id
+     * Attaches the city adapter and click listener to the given AutoCompleteTextView view id.
+     * The click listener populates the given timezone view id and the timezone is stored in the
+     * tz array at the provided index
+     *
+     * @param rootView               View containing the AutocompleteTextView and the timezone TextView
+     * @param autoCompleteTextViewId id of the AutocompleteTextView
+     * @param tzTextViewId           id of the TextView showing the timezone
+     * @param tz                     Array of TimeZones to store the timezone for the chosen city in
+     * @param tzIndex                location of the Timezone in the tz array
      */
     private void setupCityAndTZView(final View rootView, final int autoCompleteTextViewId, final int tzTextViewId, final TimeZone[] tz, final int tzIndex) {
         AutoCompleteTextView a = (AutoCompleteTextView) rootView.findViewById(autoCompleteTextViewId);
@@ -130,7 +142,7 @@ public class AddNewFlightFragment extends Fragment {
         a.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CityTimezoneTuple selection = (CityTimezoneTuple)parent.getItemAtPosition(position);
+                CityTimezoneTuple selection = (CityTimezoneTuple) parent.getItemAtPosition(position);
                 final TextView tv = (TextView) rootView.findViewById(tzTextViewId);
                 tz[tzIndex] = TimeZone.getTimeZone(selection.tz);
                 tv.setText(tz[tzIndex].getDisplayName(false, TimeZone.SHORT));
@@ -140,11 +152,12 @@ public class AddNewFlightFragment extends Fragment {
 
     /**
      * Gets ArrayList of city names for use in Origin/Destination list
+     *
      * @param arrayResId Resource Id of the array that holds the data in TimeZone|City format
      * @return ArrayList of city names
      */
     public ArrayList<CityTimezoneTuple> getTupleList(int arrayResId) {
-        if (tupleList != null ){
+        if (tupleList != null) {
             return tupleList;
         }
         String[] cityTZList = getResources().getStringArray(arrayResId);
@@ -197,7 +210,8 @@ public class AddNewFlightFragment extends Fragment {
 
     /**
      * Updates dates and times for the entire fragment if we have all the calendar data
-     *  @param departTime
+     *
+     * @param departTime
      * @param returnTime
      */
     public void updateDateTimeAndTZViews(Calendar departTime, Calendar returnTime, TimeZone depTz, TimeZone retTz) {
@@ -211,6 +225,7 @@ public class AddNewFlightFragment extends Fragment {
 
     /**
      * Sets the date and time for the given date and time views
+     *
      * @param dateFormat
      * @param timeFormat
      * @param tempCal
@@ -220,7 +235,7 @@ public class AddNewFlightFragment extends Fragment {
     private void setDateTimeViews(DateFormat dateFormat, DateFormat timeFormat, Calendar tempCal,
                                   TimeZone tz, int timeViewId, int dateViewId, int tzViewId) {
         Activity currentActivity = getActivity();
-        TextView view = (TextView)currentActivity.findViewById(timeViewId);
+        TextView view = (TextView) currentActivity.findViewById(timeViewId);
         if (view != null) {
             view.setText(timeFormat.format(tempCal.getTime()));
         }
@@ -285,26 +300,59 @@ public class AddNewFlightFragment extends Fragment {
         }
     }
 
+    /**
+     * Gets the flight departure time in milliseconds after performing timezone correction
+     *
+     * @return departure time in milliseconds
+     */
     public long getDepartCalMillis() {
-        //TODO fix timezone
-
-//            // timemillis is since utc, so tz is irrelevant. This means i have to find the offset, do math and set the offset accordingly
-//            // this also means that:
-//            // 1. I need to do math before I use timemillis, ever
-//            // 2. I need to store the displaytime in a different col than the timer time
         long timeInMS = departCal.getTimeInMillis();
+        // depart time needs to have its timezone offset removed, otherwise we end up setting the
+        // alarm for the wrong time
         int localOffset = Calendar.getInstance().getTimeZone().getOffset(timeInMS);
         int targetOffset = TimeZone.getTimeZone(timeZones[TZ_DEPART_INDEX].getID()).getOffset(timeInMS);
         int difference = localOffset - targetOffset;
         return timeInMS + (difference);
     }
 
+    /**
+     * Gets the flight return time in milliseconds after performing timezone correction
+     *
+     * @return departure time in milliseconds
+     */
     public long getReturnCalMillis() {
         long timeInMS = returnCal.getTimeInMillis();
+        // return time needs to have its timezone offset removed, otherwise we end up setting the
+        // alarm for the wrong time
         int localOffset = Calendar.getInstance().getTimeZone().getOffset(timeInMS);
         int targetOffset = TimeZone.getTimeZone(timeZones[TZ_RETURN_INDEX].getID()).getOffset(timeInMS);
         int difference = localOffset - targetOffset;
         return timeInMS + (difference);
     }
+
+    /**
+     * Returns the display string of the flight departure time
+     *
+     * @param dateFormat DateFormat to use to display the departure time
+     * @return Date, Time, and Timezone of the departing flight
+     */
+    public String getDepartTimeString(DateFormat dateFormat) {
+        return getString(R.string.flight_list_timestamp_format,
+                dateFormat.format(departCal.getTime()),
+                timeZones[TZ_DEPART_INDEX].getDisplayName(false, TimeZone.SHORT));
+    }
+
+    /**
+     * Returns the display string of the flight return time
+     *
+     * @param dateFormat DateFormat to use to display the return time
+     * @return Date, Time, and Timezone of the returning flight
+     */
+    public String getReturnTimeString(DateFormat dateFormat) {
+        return getString(R.string.flight_list_timestamp_format,
+                dateFormat.format(returnCal.getTime()),
+                timeZones[TZ_RETURN_INDEX].getDisplayName(false, TimeZone.SHORT));
+    }
+
 
 }

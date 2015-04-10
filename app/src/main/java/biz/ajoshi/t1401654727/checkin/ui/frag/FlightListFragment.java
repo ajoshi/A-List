@@ -178,7 +178,7 @@ public class FlightListFragment extends ListFragment implements LoaderManager.Lo
             return new CursorLoader(getActivity(), EventProvider.AUTH_URI,
                     new String[]{MyDBHelper.COL_ID, MyDBHelper.COL_TIME, MyDBHelper.COL_FNAME,
                             MyDBHelper.COL_LNAME, MyDBHelper.COL_CONF_CODE, MyDBHelper.COL_DONE,
-                            MyDBHelper.COL_FROM_PLACE, MyDBHelper.COL_DEST_PLACE,
+                            MyDBHelper.COL_FROM_PLACE, MyDBHelper.COL_DEST_PLACE, MyDBHelper.COL_DISPLAY_TIME,
                             MyDBHelper.COL_ATTEMPTS, MyDBHelper.COL_GATE, MyDBHelper.COL_POSITION}, null, null, null);
         } else {
             return null;
