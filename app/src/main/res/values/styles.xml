@@ -19,4 +19,12 @@
     <style name="StandardEdittext">
         <item name="android:singleLine">true</item>
     </style>
+
+    <style name="FlightList">
+        <item name="android:padding">@dimen/flight_list_padding</item>
+    </style>
+
+    <style name="FlightListItem">
+        <item name="android:textSize">@dimen/flight_list_text_size</item>
+    </style>
 </resources>

@@ -2,28 +2,29 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id = "@+id/flight_info_container"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:textSize="@dimen/flight_list_text_size"
+        style="@style/FlightListItem"
         />
     <TextView
         android:id="@+id/places"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/user_name"
-        android:textSize="@dimen/flight_list_text_size"
+        style="@style/FlightListItem"
         android:visibility="gone"
         />
     <TextView
         android:id="@+id/flight_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/flight_list_text_size"
+        style="@style/FlightListItem"
         android:layout_below="@id/places"
         />
     <ImageView
@@ -34,5 +35,4 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/checkbox_on_background"
         android:visibility="gone"/>
-
 </RelativeLayout>
