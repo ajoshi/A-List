@@ -302,7 +302,8 @@ public class SWCheckinService extends IntentService {
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(getString(R.string.notification_title))
                         .setContentText(getString(R.string.notification_text_small, boardingPosition)
-                                + (gate == null ? "" : getString(R.string.notification_has_gate, gate)));
+                                + (gate == null ? "" : getString(R.string.notification_has_gate, gate)))
+                        .setAutoCancel(true);
         if (origin != null && destination != null) {
             mBuilder.setStyle(new NotificationCompat.BigTextStyle()
                     .bigText(getString(R.string.notification_big_text, fName, lName, origin, destination, boardingPosition, gate)));
@@ -324,7 +325,8 @@ public class SWCheckinService extends IntentService {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(getString(R.string.notification_failure_title))
-                        .setContentText(getString(R.string.notification_failure_text));
+                        .setContentText(getString(R.string.notification_failure_text))
+                        .setAutoCancel(true);
         mBuilder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0,
                 MainActivity.getListIntent(getApplicationContext()), PendingIntent.FLAG_ONE_SHOT));
         // Gets an instance of the NotificationManager service
