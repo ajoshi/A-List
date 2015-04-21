@@ -22,6 +22,10 @@ import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
  */
 public class FlightCursorAdapter extends CursorAdapter {
 
+    private static final int FLIGHT_IMMINENT_RES_ID = android.R.color.holo_red_light;
+    private static final int FLIGHT_SOON_RES_ID = android.R.color.darker_gray;
+    private static final int FLIGHT_GONE_RES_ID = android.R.color.black;
+
     LayoutInflater mInflater;
     int DB_INDEX_TIME;
     int DB_INDEX_DISPLAY_TIME;
@@ -101,14 +105,14 @@ public class FlightCursorAdapter extends CursorAdapter {
 
         if (currentTime > time) {
             // shouldn't exist- should have been cleared by the cleanup, but just in case!
-            holder.bg.setBackgroundColor(res.getColor(android.R.color.black));
+            holder.bg.setBackgroundColor(res.getColor(FLIGHT_GONE_RES_ID));
         } else {
             if (time - currentTime <= Constants.MS_IN_THREE_HOURS) {
                 // three hours to go.
-                holder.bg.setBackgroundColor(res.getColor(android.R.color.holo_red_light));
+                holder.bg.setBackgroundColor(res.getColor(FLIGHT_IMMINENT_RES_ID));
             } else if (time - currentTime <= Constants.MS_IN_DAY) {
                 // flight is in a day
-                holder.bg.setBackgroundColor(res.getColor(android.R.color.darker_gray));
+                holder.bg.setBackgroundColor(res.getColor(FLIGHT_SOON_RES_ID));
             }
         }
     }
