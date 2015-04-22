@@ -32,9 +32,6 @@ import biz.ajoshi.t1401654727.checkin.ui.FlightCursorAdapter;
 
 /**
  * A fragment representing a list of flights.
- * <p/>
- * Activities containing this fragment MUST implement the @AbsListView.OnItemClickListener
- * interface.
  */
 public class FlightListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
