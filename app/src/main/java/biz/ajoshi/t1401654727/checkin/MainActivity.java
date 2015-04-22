@@ -39,7 +39,9 @@ import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
 /**
  * Main activity for this app. Holds viewpager for the various fragments
  */
-public class MainActivity extends Activity implements ActionBar.TabListener, TimePickerFrag.OnTimeSetListener, DatePickerFrag.OnDateSetListener {
+public class MainActivity extends Activity implements ActionBar.TabListener,
+        TimePickerFrag.OnTimeSetListener,
+        DatePickerFrag.OnDateSetListener {
 
     private final static String EXTRA_SHOW_LIST = "biz.ajoshi.t1401654727.checkin.MainActivity";
 
@@ -334,7 +336,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      *
      * @param dateView
      */
-    public void pickDate(View dateView) {
+    public void pickDate(TextView dateView) {
         DialogFragment newFragment = new DatePickerFrag();
         Bundle args = new Bundle();
         args.putInt(DatePickerFrag.ARG_VIEW_ID, dateView.getId());
@@ -347,7 +349,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, Tim
      *
      * @param timeView
      */
-    public void pickTime(View timeView) {
+    public void pickTime(TextView timeView) {
         Bundle args = new Bundle();
         args.putInt(TimePickerFrag.ARG_VIEW_ID, timeView.getId());
         DialogFragment timePickerFragment = new TimePickerFrag();
