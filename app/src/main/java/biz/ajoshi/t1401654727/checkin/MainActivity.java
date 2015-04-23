@@ -1,11 +1,8 @@
 package biz.ajoshi.t1401654727.checkin;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -16,7 +13,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +39,7 @@ import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
 /**
  * Main activity for this app. Holds viewpager for the various fragments
  */
-public class MainActivity extends Activity implements ActionBar.TabListener,
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
         TimePickerFrag.OnTimeSetListener,
         DatePickerFrag.OnDateSetListener {
 
@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
         cleanUpDB();
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -104,7 +104,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
         resetAlarm(this);
         // Now see if we were launched by notification
         Intent i = getIntent();
-        if (i!= null && i.getBooleanExtra(EXTRA_SHOW_LIST, false)) {
+        if (i != null && i.getBooleanExtra(EXTRA_SHOW_LIST, false)) {
             mViewPager.setCurrentItem(SectionsPagerAdapter.INDEX_OF_FLIGHT_LIST);
         }
     }
@@ -336,7 +336,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
      *
      * @param dateView
      */
-    public void pickDate(TextView dateView) {
+    public void pickDate(View dateView) {
         DialogFragment newFragment = new DatePickerFrag();
         Bundle args = new Bundle();
         args.putInt(DatePickerFrag.ARG_VIEW_ID, dateView.getId());
@@ -349,7 +349,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
      *
      * @param timeView
      */
-    public void pickTime(TextView timeView) {
+    public void pickTime(View timeView) {
         Bundle args = new Bundle();
         args.putInt(TimePickerFrag.ARG_VIEW_ID, timeView.getId());
         DialogFragment timePickerFragment = new TimePickerFrag();
@@ -383,7 +383,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
      */
     public Fragment findFragmentByPosition(int position) {
         FragmentPagerAdapter fragmentPagerAdapter = mSectionsPagerAdapter;
-        return getFragmentManager().findFragmentByTag(
+        return getSupportFragmentManager().findFragmentByTag(
                 "android:switcher:" + mViewPager.getId() + ":"
                         + fragmentPagerAdapter.getItemId(position));
     }
@@ -399,6 +399,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener,
 
     /**
      * Creates an intent that shows the flight list upon launch
+     *
      * @param ctx Context to use to create intent
      * @return
      */

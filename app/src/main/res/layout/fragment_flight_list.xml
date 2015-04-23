@@ -3,19 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ajoshi.t1401654727.checkin.frags.FlightListFragment">
+    tools:context="com.ajoshi.t1401654727.checkin.frags.FlightListFragment"
+    android:background="@null">
 
-    <ListView
-        android:id="@android:id/list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/flight_recycler_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/FlightList"
         />
 
     <TextView
-        android:id="@android:id/empty"
+        android:id="@+id/no_flights_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" />
+        android:gravity="center"
+        android:text="@string/empty_flight_list"/>
 
 </FrameLayout>
