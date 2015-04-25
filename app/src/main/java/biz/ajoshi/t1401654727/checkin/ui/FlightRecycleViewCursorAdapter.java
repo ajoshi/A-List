@@ -62,7 +62,12 @@ public class FlightRecycleViewCursorAdapter extends CursorRecyclerViewAdapter<Fl
         this.mEmptyView = emptyView;
     }
 
-
+    /**
+     * Swaps the cursor (does not close), fetches the column Ids and shows or hides the empty view
+     *
+     * @param c
+     * @return
+     */
     public Cursor swapCursor(Cursor c) {
         if (c != null) {
             // Store the indices so I can change my query without breaking UI

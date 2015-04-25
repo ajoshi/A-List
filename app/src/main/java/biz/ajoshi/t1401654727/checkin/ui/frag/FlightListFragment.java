@@ -74,6 +74,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
 
     /**
      * Given a FlightListElement, extracts the String to be shown as title of the onclick dialog
+     *
      * @param data FlightListElement containing the data for this element
      * @return String title of click dialog
      */
@@ -113,6 +114,9 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
         return title;
     }
 
+    /**
+     * Restarts the query for data which reloads the list
+     */
     public void resetList() {
         getLoaderManager().restartLoader(LOADER_ID_LOAD_FLIGHT_LIST, null, this);
     }
