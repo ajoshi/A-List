@@ -22,6 +22,7 @@ public class FlightListElement {
     /**
      * Constructs a FlightListElement from a cursor. Indices for each field must be sent in, but
      * any field except for id can be skipped by sending in a column index of -1
+     *
      * @param c
      * @param idIndex
      * @param timeStampIndex

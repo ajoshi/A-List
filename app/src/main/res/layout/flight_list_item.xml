@@ -8,33 +8,35 @@
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="@dimen/flight_card_corner_radius"
     card_view:cardBackgroundColor="@color/flight_list_item_bg_normal">
+
     <RelativeLayout
-        android:id = "@+id/flight_info_container"
+        android:id="@+id/flight_info_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            style="@style/FlightListItem"
-            />
+            style="@style/FlightListItem" />
+
         <TextView
             android:id="@+id/places"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/user_name"
             style="@style/FlightListItem"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/flight_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/FlightListItem"
-            android:layout_below="@id/places"
-            />
+            android:layout_below="@id/places" />
+
         <ImageView
             android:id="@+id/has_checked_in"
             android:layout_alignParentRight="true"
@@ -42,6 +44,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/checkbox_on_background"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

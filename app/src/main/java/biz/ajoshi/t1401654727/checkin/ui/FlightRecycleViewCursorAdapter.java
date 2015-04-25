@@ -16,7 +16,7 @@ import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 /**
  * Created by Aditya on 4/24/2015.
  */
-public class FlightRecycleViewCursorAdapter extends CursorRecyclerViewAdapter<FlightListViewHolder> implements FlightListViewHolder.FlightItemClickListener  {
+public class FlightRecycleViewCursorAdapter extends CursorRecyclerViewAdapter<FlightListViewHolder> implements FlightListViewHolder.FlightItemClickListener {
     private long mCurrentTime;
     private Resources mResources;
     private Context mContext;
@@ -42,14 +42,13 @@ public class FlightRecycleViewCursorAdapter extends CursorRecyclerViewAdapter<Fl
     private static final int FLIGHT_DEFAULT_RES_ID = R.color.flight_list_item_bg_normal;
 
     /**
-     *
-     * @param flightList Cursor containing flight list data
-     * @param c Context
-     * @param emptyView TextView to be shown if the list is empty
+     * @param flightList    Cursor containing flight list data
+     * @param c             Context
+     * @param emptyView     TextView to be shown if the list is empty
      * @param clickListener Listener to be invoked on click
      */
     public FlightRecycleViewCursorAdapter(Cursor flightList, Context c,
-                                    TextView emptyView, FlightItemClickListener clickListener) {
+                                          TextView emptyView, FlightItemClickListener clickListener) {
         super(c, flightList);
 
         mContext = c;
@@ -106,9 +105,9 @@ public class FlightRecycleViewCursorAdapter extends CursorRecyclerViewAdapter<Fl
     /**
      * Given a ViewHolder and a cursor, populates the viewholder
      *
-     * @param holder  ViewHolder containing references to the desired views
+     * @param holder ViewHolder containing references to the desired views
      * @param cursor cursor containing data
-     * @param ctx     Context
+     * @param ctx    Context
      */
     private void populate(FlightListViewHolder holder, Cursor cursor, Context ctx) {
         FlightListElement element = new FlightListElement(cursor, DB_INDEX_ID, DB_INDEX_TIME,

@@ -11,7 +11,7 @@ import android.util.Log;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
 
-public class EventProviderTest extends ProviderTestCase2 <EventProvider> {
+public class EventProviderTest extends ProviderTestCase2<EventProvider> {
 
     private static final String TAG = EventProviderTest.class.getSimpleName();
     private static final int NUMBER_OF_TEST_ROWS = 3;
@@ -22,6 +22,7 @@ public class EventProviderTest extends ProviderTestCase2 <EventProvider> {
     private static final long BASE_TIME_DELTA = 1000;
 
     private MockContentResolver mMockResolver;
+
     /**
      * Constructor.
      *
@@ -63,12 +64,13 @@ public class EventProviderTest extends ProviderTestCase2 <EventProvider> {
 
     /**
      * Util to insert default rows
+     *
      * @return Uri of the last insert
      */
     private Uri insertTestRows() {
         for (int i = 0; i < NUMBER_OF_TEST_ROWS - 1; i++) {
-            mMockResolver.insert(EventProvider.AUTH_URI, makeFakeCV(FIRST_NAME_BASE+i,
-                    LAST_NAME_BASE+i, CONF_CODE_BASE+i, TIME_BASE+(i* BASE_TIME_DELTA)));
+            mMockResolver.insert(EventProvider.AUTH_URI, makeFakeCV(FIRST_NAME_BASE + i,
+                    LAST_NAME_BASE + i, CONF_CODE_BASE + i, TIME_BASE + (i * BASE_TIME_DELTA)));
         }
         return mMockResolver.insert(EventProvider.AUTH_URI, makeFakeCV(FIRST_NAME_BASE, LAST_NAME_BASE,
                 CONF_CODE_BASE, TIME_BASE - BASE_TIME_DELTA));
@@ -139,7 +141,7 @@ public class EventProviderTest extends ProviderTestCase2 <EventProvider> {
      */
     public void testDelete() {
         insertTestRows();
-        mMockResolver.delete(EventProvider.AUTH_URI, MyDBHelper.COL_ID  +"=?", new String[] {String.valueOf(NUMBER_OF_TEST_ROWS)});
+        mMockResolver.delete(EventProvider.AUTH_URI, MyDBHelper.COL_ID + "=?", new String[]{String.valueOf(NUMBER_OF_TEST_ROWS)});
         Cursor c = mMockResolver.query(EventProvider.AUTH_URI,
                 new String[]{MyDBHelper.COL_ID, MyDBHelper.COL_FNAME},
                 null, null, null);
