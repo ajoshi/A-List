@@ -19,29 +19,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
-
 import biz.ajoshi.t1401654727.checkin.FlightListElement;
 import biz.ajoshi.t1401654727.checkin.R;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
 import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
-import biz.ajoshi.t1401654727.checkin.ui.FlightRecycleViewAdapter;
+import biz.ajoshi.t1401654727.checkin.ui.FlightRecycleViewCursorAdapter;
 
 /**
  * A fragment representing a list of flights.
  */
-public class FlightListFragment extends Fragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>, FlightRecycleViewAdapter.FlightItemClickListener {
+public class FlightListFragment extends Fragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>, FlightRecycleViewCursorAdapter.FlightItemClickListener {
 
     private final static int LOADER_ID_LOAD_FLIGHT_LIST = 1;
     /**
      * The Adapter which will be used to populate the ListView with
      * Views.
      */
-    private FlightRecycleViewAdapter mAdapter;
+    private FlightRecycleViewCursorAdapter mAdapter;
     RecyclerView mRecyclerView;
 
     /**
@@ -68,7 +63,8 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_flight, container, false);
-        mAdapter = new FlightRecycleViewAdapter(null, getActivity(), (TextView) view.findViewById(R.id.no_flights_message), this);
+        mAdapter = new FlightRecycleViewCursorAdapter(null, getActivity(), (TextView) view.findViewById(R.id.no_flights_message), this);
+        mAdapter.setHasStableIds(true);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.flight_recycler_list);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -83,11 +79,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
      */
     private String getTitleFromListItem(FlightListElement data) {
         String title;
-        long time = data.timeStamp;
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time);
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault());
-        String timeString = dateFormat.format(cal.getTime());
+        String timeString = data.displayTime; /// dateFormat.format(cal.getTime());
         boolean checkedIn = data.hasCheckedIn;
         if (checkedIn) {
             //time, origin, destination, position, gate
@@ -142,27 +134,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
         if (loader.getId() == LOADER_ID_LOAD_FLIGHT_LIST) {
             if (cursor != null && cursor.moveToFirst()) {
-                //lets see if we can make a list out of the cursor
-                ArrayList<FlightListElement> resultSet = new ArrayList<FlightListElement>(cursor.getCount());
-                final int TimeIndex = cursor.getColumnIndex(MyDBHelper.COL_TIME);
-                final int fNameIndex = cursor.getColumnIndex(MyDBHelper.COL_FNAME);
-                final int lNameIndex = cursor.getColumnIndex(MyDBHelper.COL_LNAME);
-                final int doneIndex = cursor.getColumnIndex(MyDBHelper.COL_DONE);
-                final int destinationIndex = cursor.getColumnIndex(MyDBHelper.COL_DEST_PLACE);
-                final int originIndex = cursor.getColumnIndex(MyDBHelper.COL_FROM_PLACE);
-                final int displayTimeIndex = cursor.getColumnIndex(MyDBHelper.COL_DISPLAY_TIME);
-                final int idIndex = cursor.getColumnIndex(MyDBHelper.COL_ID);
-                final int gateIndex = cursor.getColumnIndex(MyDBHelper.COL_GATE);
-                final int positionIndex = cursor.getColumnIndex(MyDBHelper.COL_POSITION);
-                final int confCodeIndex = cursor.getColumnIndex(MyDBHelper.COL_CONF_CODE);
-                final int attemptsIndex = cursor.getColumnIndex(MyDBHelper.COL_ATTEMPTS);
-                do {
-                    resultSet.add(new FlightListElement(cursor, idIndex, TimeIndex,
-                            fNameIndex, lNameIndex, doneIndex, originIndex,
-                            destinationIndex, displayTimeIndex, gateIndex, positionIndex,
-                            confCodeIndex, attemptsIndex));
-                } while (cursor.moveToNext());
-                mAdapter.setList(resultSet);
+                mAdapter.swapCursor(cursor);
             }
         }
     }
@@ -170,7 +142,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
         if (loader.getId() == LOADER_ID_LOAD_FLIGHT_LIST) {
-            mAdapter.setList(null);
+            mAdapter.swapCursor(null);
         }
     }
 
@@ -196,7 +168,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
                                 // Delete this entry
                                 //TODO confirmation dialog. yay, dialog spam
                                 act.getContentResolver().delete(EventProvider.AUTH_URI, MyDBHelper.COL_ID + " = " + flightId, null);
-                                mAdapter.removeItem(index);
+                                resetList();
                             }
                         })
                         .setNegativeButton(R.string.flight_detail_dialog_force_checkin_button, new DialogInterface.OnClickListener() {

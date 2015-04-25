@@ -1,5 +1,6 @@
 package biz.ajoshi.t1401654727.checkin.ui;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,7 +15,7 @@ public class FlightListViewHolder extends RecyclerView.ViewHolder implements Vie
     TextView passengerNameView;
     TextView timeView;
     TextView placesView;
-    View backgroundView;
+    CardView backgroundView;
     ImageView checkbox;
     FlightItemClickListener mClickListener;
 
@@ -23,7 +24,7 @@ public class FlightListViewHolder extends RecyclerView.ViewHolder implements Vie
         passengerNameView = (TextView) itemView.findViewById(R.id.user_name);
         this.timeView = (TextView) itemView.findViewById(R.id.flight_time);
         this.placesView = (TextView) itemView.findViewById(R.id.places);
-        this.backgroundView = itemView.findViewById(R.id.flight_info_container);
+        this.backgroundView = (CardView) itemView.findViewById(R.id.card_view);
         this.checkbox = (ImageView) itemView.findViewById(R.id.has_checked_in);
         mClickListener = clickListener;
         itemView.setOnClickListener(this);
