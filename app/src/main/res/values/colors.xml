@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="flight_list_item_bg_gone">@android:color/black</color>
+    <color name="flight_list_item_bg_imminent">@android:color/holo_red_light</color>
+    <color name="flight_list_item_bg_soon">@android:color/darker_gray</color>
+    <color name="flight_list_item_bg_normal">@android:color/white</color>
+</resources>

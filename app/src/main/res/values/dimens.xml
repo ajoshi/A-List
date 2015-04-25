@@ -7,4 +7,5 @@
     <dimen name="flight_entry_fake_spinner_padding_top_bottom">3dp</dimen>
     <dimen name="flight_entry_fake_spinner_padding_side">8dp</dimen>
     <dimen name="flight_entry_fake_spinner_margin">4dp</dimen>
+    <dimen name="flight_card_corner_radius">4dp</dimen>
     </resources>
