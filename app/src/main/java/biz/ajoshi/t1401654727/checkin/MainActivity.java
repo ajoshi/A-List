@@ -262,12 +262,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * Inserts new data into the DB
      *
      * @param time      Time in ms when this flight takes off
+     * @param dTime     String form of time to be displayed
      * @param firstName first name
      * @param lastName  last name
      * @param confCode  confirmation code
      * @return true if succeeded, false otherwise
      */
-    private boolean addReminderToDB(long time, String firstName, String lastName, String confCode) {
+    private boolean addReminderToDB(long time, String dTime, String firstName, String lastName, String confCode) {
         if (firstName == null || lastName == null || confCode == null) {
             return false;
         }
@@ -277,6 +278,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         cv.put(MyDBHelper.COL_LNAME, lastName);
         cv.put(MyDBHelper.COL_CONF_CODE, confCode);
         cv.put(MyDBHelper.COL_TIME, time);
+        cv.put(MyDBHelper.COL_DISPLAY_TIME, dTime);
         getContentResolver().insert(EventProvider.AUTH_URI, cv);
         return true;
     }
@@ -299,7 +301,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             return false;
         }
         if (flightSource == null || flightDest == null) {
-            return addReminderToDB(time, firstName, lastName, confCode);
+            return addReminderToDB(time, dTime, firstName, lastName, confCode);
         }
         ContentValues cv = new ContentValues();
         cv.put(MyDBHelper.COL_FNAME, firstName);

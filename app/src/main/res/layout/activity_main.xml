@@ -4,4 +4,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ajoshi.t1401654727.checkin.MainActivity"
-    android:background="@null"/>
+    android:background="@null" />
