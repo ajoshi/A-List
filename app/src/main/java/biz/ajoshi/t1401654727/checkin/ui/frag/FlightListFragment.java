@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -69,6 +70,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration((int)getResources().getDimension(R.dimen.flight_card_vertical_space)));
         return view;
     }
 
@@ -188,4 +190,22 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
         };
         deleteOrCheckinDialog.show(getFragmentManager(), "FlightListFragment.deleteOrCheckinDialog");
     }
+
+    public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
+
+        private final int mVerticalSpaceHeight;
+
+        public SpaceItemDecoration(int mVerticalSpaceHeight) {
+            this.mVerticalSpaceHeight = mVerticalSpaceHeight;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            outRect.bottom = mVerticalSpaceHeight;
+            outRect.left = mVerticalSpaceHeight/2;
+            outRect.right = mVerticalSpaceHeight/2;
+        }
+    }
+
 }

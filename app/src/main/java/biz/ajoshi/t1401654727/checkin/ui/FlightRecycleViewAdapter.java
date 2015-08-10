@@ -17,7 +17,8 @@ import biz.ajoshi.t1401654727.checkin.FlightListElement;
 import biz.ajoshi.t1401654727.checkin.R;
 
 /**
- * Adapter for RecyclerView to show flight info
+ * Adapter for RecyclerView to show flight info. If the dataset is large, it's best to create a
+ * cursorAdapter class instead of making a List out of the cursor
  */
 public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListViewHolder> implements FlightListViewHolder.FlightItemClickListener {
     private List<FlightListElement> mDataList;
@@ -29,10 +30,10 @@ public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListVie
     private TextView mEmptyView;
     private FlightItemClickListener mFlightClickListener;
 
-    private static final int FLIGHT_IMMINENT_RES_ID = android.R.color.holo_red_light;
-    private static final int FLIGHT_SOON_RES_ID = android.R.color.darker_gray;
-    private static final int FLIGHT_GONE_RES_ID = android.R.color.black;
-    private static final int FLIGHT_DEFAULT_RES_ID = android.R.color.transparent;
+    private static final int FLIGHT_IMMINENT_RES_ID = R.color.flight_list_item_bg_imminent;
+    private static final int FLIGHT_SOON_RES_ID = R.color.flight_list_item_bg_soon;
+    private static final int FLIGHT_GONE_RES_ID = R.color.flight_list_item_bg_gone;
+    private static final int FLIGHT_DEFAULT_RES_ID = R.color.flight_list_item_bg_normal;
 
     public FlightRecycleViewAdapter(List<FlightListElement> flightList, Context c,
                                     TextView emptyView, FlightItemClickListener clickListener) {
@@ -51,7 +52,7 @@ public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListVie
     @Override
     public FlightListViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View itemView = mInflater.inflate(R.layout.flight_list_item, viewGroup, false);
-        mEmptyView = (TextView) itemView.findViewById(R.id.no_flights_message);
+        //mEmptyView = (TextView) itemView.findViewById(R.id.no_flights_message);
         return new FlightListViewHolder(itemView, this);
     }
 
@@ -70,6 +71,10 @@ public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListVie
         return 0;
     }
 
+    public long getItemId(int position) {
+        return Long.parseLong(mDataList.get(position).id);
+    }
+
     /**
      * Removes the item at the given position from the backing list and notifies the adapter so
      * view can be updated/animated
@@ -77,10 +82,11 @@ public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListVie
      * @param position
      */
     public void removeItem(int position) {
-        super.notifyItemRemoved(position);
         if (mDataList != null) {
             mDataList.remove(position);
         }
+//        super.notifyItemRemoved(position);
+        super.notifyDataSetChanged();
     }
 
     /**
@@ -118,18 +124,19 @@ public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListVie
 
         if (mmCurrentTime > time) {
             // shouldn't exist- should have been cleared by the cleanup, but just in case!
-            holder.backgroundView.setBackgroundColor(mResources.getColor(FLIGHT_GONE_RES_ID));
+            holder.backgroundView.setCardBackgroundColor(mResources.getColor(FLIGHT_GONE_RES_ID));
         } else {
             if (time - mmCurrentTime <= Constants.MS_IN_THREE_HOURS) {
                 // three hours to go.
-                holder.backgroundView.setBackgroundColor(mResources.getColor(FLIGHT_IMMINENT_RES_ID));
+                holder.backgroundView.setCardBackgroundColor(mResources.getColor(FLIGHT_IMMINENT_RES_ID));
             } else if (time - mmCurrentTime <= Constants.MS_IN_DAY) {
                 // flight is in a day
-                holder.backgroundView.setBackgroundColor(mResources.getColor(FLIGHT_SOON_RES_ID));
+                holder.backgroundView.setCardBackgroundColor(mResources.getColor(FLIGHT_SOON_RES_ID));
             } else {
                 // in case row reuse changed the color of this row
-                holder.backgroundView.setBackgroundColor(mResources.getColor(FLIGHT_DEFAULT_RES_ID));
+                holder.backgroundView.setCardBackgroundColor(mResources.getColor(FLIGHT_DEFAULT_RES_ID));
             }
+
         }
     }
 
@@ -150,6 +157,7 @@ public class FlightRecycleViewAdapter extends RecyclerView.Adapter<FlightListVie
             }
         }
         mEmptyView.setVisibility(isListempty ? View.VISIBLE : View.GONE);
+        notifyDataSetChanged();
     }
 
     @Override

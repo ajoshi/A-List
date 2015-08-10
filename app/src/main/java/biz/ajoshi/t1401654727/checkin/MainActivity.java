@@ -107,6 +107,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         if (i != null && i.getBooleanExtra(EXTRA_SHOW_LIST, false)) {
             mViewPager.setCurrentItem(SectionsPagerAdapter.INDEX_OF_FLIGHT_LIST);
         }
+//        getWindow().setBackgroundDrawable(null);
     }
 
     @Override
