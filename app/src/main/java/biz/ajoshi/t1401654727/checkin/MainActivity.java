@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
-import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
+import biz.ajoshi.t1401654727.checkin.receivers.WakefulReceiver;
 import biz.ajoshi.t1401654727.checkin.ui.frag.AddNewFlightFragment;
 import biz.ajoshi.t1401654727.checkin.ui.frag.FlightListFragment;
 import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.DatePickerFrag;
@@ -187,8 +187,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         * alarm for the next event.
         */
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getService(ctx, 0,
-                SWCheckinService.IntentForCheckingIn(ctx, fName, lName, cCode, id), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0,
+                WakefulReceiver.IntentForCheckingIn(fName, lName, cCode, id), PendingIntent.FLAG_UPDATE_CURRENT);
+//                PendingIntent.getService(ctx, 0,
+//                SWCheckinService.IntentForCheckingIn(ctx, fName, lName, cCode, id), PendingIntent.FLAG_UPDATE_CURRENT);
         long alarmTime = time - Constants.MS_IN_DAY;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             // if less than kitkat, use the old one

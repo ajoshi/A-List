@@ -1,8 +1,10 @@
-package biz.ajoshi.t1401654727.checkin;
+package biz.ajoshi.t1401654727.checkin.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import biz.ajoshi.t1401654727.checkin.MainActivity;
 
 /**
  * This resets the alarm upon boot, since alarms are reset upon reboot

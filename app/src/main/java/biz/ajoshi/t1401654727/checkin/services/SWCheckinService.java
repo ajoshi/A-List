@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -32,6 +34,7 @@ import biz.ajoshi.t1401654727.checkin.MainActivity;
 import biz.ajoshi.t1401654727.checkin.R;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
+import biz.ajoshi.t1401654727.checkin.receivers.WakefulReceiver;
 
 import static biz.ajoshi.t1401654727.checkin.MainActivity.resetAlarm;
 
@@ -56,7 +59,7 @@ public class SWCheckinService extends IntentService {
     private static final int MS_IN_MINUTE = 60000;
     private final static int SUCCESS_NOTIFICATION_ID = 1;
     private final static int FAILURE_NOTIFICATION_ID = 2;
-
+    private static final String TAG = "SWCheckinService";
 
     public SWCheckinService() {
         super("SWQuerier");
@@ -149,6 +152,9 @@ public class SWCheckinService extends IntentService {
         String content = readTag(is);
 
         //discard the closing tag
+        if (content == null) {
+            return content;
+        }
         int indexOfNextTag = content.indexOf('<');
         if (indexOfNextTag != -1) {
             content = content.substring(0, indexOfNextTag);
@@ -178,7 +184,7 @@ public class SWCheckinService extends IntentService {
         do {
             int thisChar = stream.read();
             if (thisChar == -1) {
-                return sb.toString();
+                return null;
             }
             if (thisChar == '<') {
                 isInTag = true;
@@ -192,6 +198,12 @@ public class SWCheckinService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        PowerManager pm = (PowerManager)getSystemService(
+                Context.POWER_SERVICE);
+        PowerManager.WakeLock wl = pm.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "SWCheckinService");
+        wl.acquire(Constants.MS_IN_THREE_HOURS/60); // Should never take longer
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_CHECK_IN.equals(action)) {
@@ -202,6 +214,8 @@ public class SWCheckinService extends IntentService {
                 handleActionCheckin(fName, lName, cCode, id);
             }
         }
+        wl.release();
+        WakefulReceiver.completeWakefulIntent(intent);
     }
 
     /**
@@ -226,6 +240,7 @@ public class SWCheckinService extends IntentService {
     }
 
     private void registerRetry(String id) {
+        Log.w(TAG, "checkin failed, setting retry alarm");
         // see how many times we've tried for this flight
         Cursor entryForThisFlight = getContentResolver().query(EventProvider.AUTH_URI,
                 new String[]{MyDBHelper.COL_ATTEMPTS}, MyDBHelper.COL_ID + "=?", new String[]{id},
@@ -266,7 +281,7 @@ public class SWCheckinService extends IntentService {
      * @throws IOException
      */
     private void onSuccess(String id, String fName, String lName, String boardingPosition,
-                           @Nullable String gate, @Nullable String origin, @Nullable String destination) throws IOException {
+                           @Nullable String gate, @Nullable String origin, @Nullable String destination) {
         makeSuccessNotification(fName, lName, boardingPosition, gate, origin, destination);
         ContentValues cv = new ContentValues();
         cv.put(MyDBHelper.COL_DONE, 1);
@@ -295,8 +310,9 @@ public class SWCheckinService extends IntentService {
      * @param destination      where the flight is headed
      * @throws IOException
      */
-    private void makeSuccessNotification(String fName, String lName, String boardingPosition,
-                                         @Nullable String gate, String origin, String destination) throws IOException {
+    private void
+    makeSuccessNotification(String fName, String lName, String boardingPosition,
+                                         @Nullable String gate, String origin, String destination) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
@@ -370,11 +386,14 @@ public class SWCheckinService extends IntentService {
             }
             if (tag.contains(GATE_TAG_CLASS)) {
                 gate = getDocumentContentForNextTag(is);
+                if(gate != null && gate.length() > Constants.MAX_GATE_NAME_LENGTH) {
+                    // This would happen if the gate data wasn't correctly populated in the response
+                    gate = gate.substring(0, Constants.MAX_GATE_NAME_LENGTH);
+                }
                 break;
             }
             tag = readTag(is);
         }
-
         if (is != null) {
             is.close();
         }

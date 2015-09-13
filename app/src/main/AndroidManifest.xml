@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -32,11 +33,16 @@
             android:exported="false"></service>
 
         <receiver
-            android:name=".BootBroadcastReceiver"
+            android:name=".receivers.BootBroadcastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receivers.WakefulReceiver" >
+            <intent-filter>
+                <action android:name="biz.ajoshi.t1401654727.receivers.WAKE_UP" />
             </intent-filter>
         </receiver>
     </application>
