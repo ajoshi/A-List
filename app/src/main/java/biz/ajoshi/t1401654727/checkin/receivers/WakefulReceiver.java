@@ -11,6 +11,10 @@ import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
 public class WakefulReceiver extends WakefulBroadcastReceiver {
 
     public static final String ACTION_WAKE_UP = "biz.ajoshi.t1401654727.receivers.WAKE_UP";
+    public static final String ACTION_HALF_HOUR_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_THIRTY";
+    public static final String ACTION_TEN_MIN_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_TEN";
+    public static final String ACTION_FIVE_MIN_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_FIVE";
+    public static final String ACTION_ONE_MIN_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_ONE";
 
     private static final String EXTRA_FIRST_NAME = "biz.ajoshi.t1401654727.checkin.receivers.extra.FNAME";
     private static final String EXTRA_LAST_NAME = "biz.ajoshi.t1401654727.checkin.receivers.extra.LNAME";
@@ -20,15 +24,19 @@ public class WakefulReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // This is the Intent to deliver to our service.
-        String fname = intent.getStringExtra(EXTRA_FIRST_NAME);
-        String lname = intent.getStringExtra(EXTRA_LAST_NAME);
-        String ccode = intent.getStringExtra(EXTRA_CONF_CODE);
-        String id = intent.getStringExtra(EXTRA_ID);
-        Intent serviceIntent = SWCheckinService.IntentForCheckingIn(context, fname, lname, ccode, id);
+        if (ACTION_WAKE_UP.equals(intent.getAction())) {
+            String fname = intent.getStringExtra(EXTRA_FIRST_NAME);
+            String lname = intent.getStringExtra(EXTRA_LAST_NAME);
+            String ccode = intent.getStringExtra(EXTRA_CONF_CODE);
+            String id = intent.getStringExtra(EXTRA_ID);
+            Intent serviceIntent = SWCheckinService.IntentForCheckingIn(context, fname, lname, ccode, id);
 
-        // Start the service, keeping the device awake while it is launching.
-        Log.i("WakefulReceiver", "Starting service @ " + SystemClock.elapsedRealtime());
-        startWakefulService(context, serviceIntent);
+            // Start the service, keeping the device awake while it is launching.
+            Log.i("WakefulReceiver", "Starting service @ " + SystemClock.elapsedRealtime());
+            startWakefulService(context, serviceIntent);
+        } else {
+            WakefulReceiver.completeWakefulIntent(intent);
+        }
     }
 
     /**

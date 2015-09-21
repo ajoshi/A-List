@@ -101,7 +101,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                             .setTabListener(this));
         }
         // on launch, reset alarm
-        resetAlarm(this);
+        resetAlarm(this, true);
         // Now see if we were launched by notification
         Intent i = getIntent();
         if (i != null && i.getBooleanExtra(EXTRA_SHOW_LIST, false)) {
@@ -151,6 +151,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * Sets the single alarm we have to go off when the earliest event is scheduled for
      */
     public static void resetAlarm(Context ctx) {
+        resetAlarm(ctx, false);
+    }
+
+    /**
+     * Sets the single alarm we have to go off when the earliest event is scheduled for
+     * @param isPrecise true if we want to be sure that the device is awake when this alarm goes off
+     */
+    public static void resetAlarm(Context ctx, boolean isPrecise) {
         Cursor c = ctx.getContentResolver().query(Uri.withAppendedPath(EventProvider.AUTH_URI,
                         EventProvider.PATH_SEGMENT_SELECT_FIRST),
                 new String[]{MyDBHelper.COL_TIME, MyDBHelper.COL_FNAME,
@@ -159,7 +167,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 new String[]{"0", String.valueOf(Constants.MAX_TRIES_FOR_CHECKIN)}, null);
         if (c != null) {
             if (c.moveToFirst()) {
-                setAlarm(ctx, c.getLong(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4));
+                setAlarm(ctx, c.getLong(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), isPrecise);
                 c.close();
                 return;
             }
@@ -168,7 +176,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     /**
-     * Sets an exact alarm for a checkin at the given time
+     * Sets an exact alarm for a checkin at the given time. If 'isprecise' is set to true,
+     * additional alarms are set to make sure the device is awake when the alarm goes off
      *
      * @param ctx
      * @param time  when the checkin should occur
@@ -176,8 +185,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * @param lName last name
      * @param cCode confirmation code
      * @param id    id of this entry in the db
+     * @param isPrecise true if we want to be sure that the device is awake when this alarm goes off
      */
-    private static void setAlarm(Context ctx, long time, String fName, String lName, String cCode, String id) {
+    private static void setAlarm(Context ctx, long time, String fName, String lName, String cCode, String id, boolean isPrecise) {
        /*
         * Because of http://developer.android.com/reference/android/content/Intent.html#filterEquals(android.content.Intent)
         * returnpIntent will override departpIntent.
@@ -189,9 +199,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0,
                 WakefulReceiver.IntentForCheckingIn(fName, lName, cCode, id), PendingIntent.FLAG_UPDATE_CURRENT);
-//                PendingIntent.getService(ctx, 0,
-//                SWCheckinService.IntentForCheckingIn(ctx, fName, lName, cCode, id), PendingIntent.FLAG_UPDATE_CURRENT);
         long alarmTime = time - Constants.MS_IN_DAY;
+        if (isPrecise) {
+            setExactAlarm(am,  PendingIntent.getBroadcast(ctx, 0,
+                    new Intent(WakefulReceiver.ACTION_HALF_HOUR_TO_WAKEUP), PendingIntent.FLAG_UPDATE_CURRENT), alarmTime - Constants.MS_IN_THIRTY_MINUTES);
+            setExactAlarm(am,  PendingIntent.getBroadcast(ctx, 0,
+                    new Intent(WakefulReceiver.ACTION_FIVE_MIN_TO_WAKEUP), PendingIntent.FLAG_UPDATE_CURRENT), alarmTime - Constants.MS_IN_FIVE_MINUTES);
+            setExactAlarm(am,  PendingIntent.getBroadcast(ctx, 0,
+                    new Intent(WakefulReceiver.ACTION_TEN_MIN_TO_WAKEUP), PendingIntent.FLAG_UPDATE_CURRENT), alarmTime - Constants.MS_IN_TEN_MINUTES);
+            setExactAlarm(am,  PendingIntent.getBroadcast(ctx, 0,
+                    new Intent(WakefulReceiver.ACTION_ONE_MIN_TO_WAKEUP), PendingIntent.FLAG_UPDATE_CURRENT), alarmTime - Constants.MS_IN_ONE_MINUTE);
+        }
+        setExactAlarm(am, pendingIntent, alarmTime);
+    }
+
+    private static void setExactAlarm(AlarmManager am, PendingIntent pendingIntent, long alarmTime) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             // if less than kitkat, use the old one
             am.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
@@ -255,7 +277,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             //reset the frag
             refreshFlightListFrag();
-            resetAlarm(this);
+            resetAlarm(this, true);
         } else {
             Toast.makeText(this, R.string.entry_not_added_toast, Toast.LENGTH_LONG).show();
         }
