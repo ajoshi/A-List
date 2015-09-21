@@ -294,6 +294,8 @@ public class SWCheckinService extends IntentService {
         if (destination != null) {
             cv.put(MyDBHelper.COL_DEST_PLACE, destination);
         }
+        cv.put(MyDBHelper.COL_POSITION, boardingPosition);
+
         getContentResolver().update(EventProvider.AUTH_URI, cv, MyDBHelper.COL_ID + "=?",
                 new String[]{id});
         resetAlarm(this);
