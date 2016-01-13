@@ -216,6 +216,7 @@ public class SWCheckinService extends IntentService {
         }
         wl.release();
         WakefulReceiver.completeWakefulIntent(intent);
+        sendBroadcast(new Intent(WakefulReceiver.ACTION_WAKE_UP));
     }
 
     /**
@@ -295,6 +296,7 @@ public class SWCheckinService extends IntentService {
             cv.put(MyDBHelper.COL_DEST_PLACE, destination);
         }
         cv.put(MyDBHelper.COL_POSITION, boardingPosition);
+        cv.put(MyDBHelper.COL_FNAME, fName);
 
         getContentResolver().update(EventProvider.AUTH_URI, cv, MyDBHelper.COL_ID + "=?",
                 new String[]{id});

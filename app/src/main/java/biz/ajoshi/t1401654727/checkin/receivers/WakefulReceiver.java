@@ -2,10 +2,12 @@ package biz.ajoshi.t1401654727.checkin.receivers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
+import biz.ajoshi.t1401654727.checkin.Constants;
 import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
 
 public class WakefulReceiver extends WakefulBroadcastReceiver {
@@ -15,11 +17,13 @@ public class WakefulReceiver extends WakefulBroadcastReceiver {
     public static final String ACTION_TEN_MIN_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_TEN";
     public static final String ACTION_FIVE_MIN_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_FIVE";
     public static final String ACTION_ONE_MIN_TO_WAKEUP = "biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_ONE";
+    public static final String ACTION_CHECKIN_DONE = "biz.ajoshi.t1401654727.receivers.CHECKIN_DONE";
 
     private static final String EXTRA_FIRST_NAME = "biz.ajoshi.t1401654727.checkin.receivers.extra.FNAME";
     private static final String EXTRA_LAST_NAME = "biz.ajoshi.t1401654727.checkin.receivers.extra.LNAME";
     private static final String EXTRA_CONF_CODE = "biz.ajoshi.t1401654727.checkin.receivers.extra.CCODE";
     private static final String EXTRA_ID = "biz.ajoshi.t1401654727.checkin.receivers.extra.ID";
+    PowerManager.WakeLock wl;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,6 +39,18 @@ public class WakefulReceiver extends WakefulBroadcastReceiver {
             Log.i("WakefulReceiver", "Starting service @ " + SystemClock.elapsedRealtime());
             startWakefulService(context, serviceIntent);
         } else {
+            if (ACTION_ONE_MIN_TO_WAKEUP.equals(intent.getAction())) {
+                PowerManager pm = (PowerManager)context.getSystemService(
+                        Context.POWER_SERVICE);
+                wl = pm.newWakeLock(
+                        PowerManager.PARTIAL_WAKE_LOCK,
+                        "SWCheckinService");
+                wl.acquire(Constants.MS_IN_THREE_HOURS/60); // Should never take longer
+            } else if (ACTION_CHECKIN_DONE.equals(intent.getAction())) {
+                if (wl != null) {
+                    wl.release();
+                }
+            }
             WakefulReceiver.completeWakefulIntent(intent);
         }
     }
