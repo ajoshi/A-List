@@ -3,5 +3,5 @@
     android:id="@+id/pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ajoshi.t1401654727.checkin.MainActivity"
+    tools:context="biz.ajoshi.t1401654727.checkin.MainActivity"
     android:background="@null" />

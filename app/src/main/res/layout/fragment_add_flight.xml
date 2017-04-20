@@ -63,7 +63,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/input_hint_departure_date"
                 style="@style/FakeSpinners"
-                android:onClick="pickDate"
                 android:inputType="datetime" />
 
             <TextView
@@ -72,7 +71,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/input_hint_departure_time"
                 style="@style/FakeSpinners"
-                android:onClick="pickTime"
                 android:inputType="datetime" />
 
             <TextView
@@ -93,7 +91,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/input_hint_return_date"
                 style="@style/FakeSpinners"
-                android:onClick="pickDate"
                 android:inputType="datetime" />
 
             <TextView
@@ -101,8 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/input_hint_return_dtime"
-                style="@style/FakeSpinners"
-                android:onClick="pickTime" />
+                style="@style/FakeSpinners" />
 
             <TextView
                 android:id="@+id/returnTZ"
@@ -115,7 +111,6 @@
             android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_check_in"
-            android:onClick="createReminder" />
+            android:text="@string/btn_check_in" />
     </LinearLayout>
 </ScrollView>

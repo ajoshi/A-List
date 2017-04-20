@@ -1,8 +1,13 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar"></style>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.AppTheme">
+        <!-- Customize your theme here. -->
+    </style>
 
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    </style>
     <style name="FakeSpinners" parent="android:Widget.DeviceDefault.Light.Spinner">
         <item name="android:paddingLeft">@dimen/flight_entry_fake_spinner_padding_side</item>
         <item name="android:paddingRight">@dimen/flight_entry_fake_spinner_padding_side</item>

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -32,6 +33,13 @@ import biz.ajoshi.t1401654727.checkin.ui.FlightRecycleViewCursorAdapter;
  */
 public class FlightListFragment extends Fragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>, FlightRecycleViewCursorAdapter.FlightItemClickListener {
 
+    /**
+     * Interface that will somehow add a new flight when asked to do so
+     */
+    public interface NewFlightAdder {
+        void addNewFlight();
+    }
+
     private final static int LOADER_ID_LOAD_FLIGHT_LIST = 1;
     /**
      * The Adapter which will be used to populate the ListView with
@@ -39,7 +47,7 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
      */
     private FlightRecycleViewCursorAdapter mAdapter;
     RecyclerView mRecyclerView;
-
+    private NewFlightAdder newFlightAdder;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -61,6 +69,15 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        if (!(activity instanceof AddNewFlightFragment.NewFlightAddedListener)) {
+            throw new ClassCastException("Activity must implement NewFlightAdder");
+        }
+        newFlightAdder = (NewFlightAdder) activity;
+        super.onAttach(activity);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_flight, container, false);
@@ -71,6 +88,12 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration((int)getResources().getDimension(R.dimen.flight_card_vertical_space)));
+        final FloatingActionButton myFab = (FloatingActionButton) view.findViewById(R.id.add_flight_fab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                newFlightAdder.addNewFlight();
+            }
+        });
         return view;
     }
 

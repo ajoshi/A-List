@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ajoshi.t1401654727.checkin.frags.FlightListFragment"
+    tools:context="biz.ajoshi.t1401654727.checkin.ui.frag.FlightListFragment"
     android:background="@null">
 
     <android.support.v7.widget.RecyclerView
@@ -19,5 +19,14 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/empty_flight_list" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_flight_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_launcher" />
 
-</FrameLayout>
+</RelativeLayout>

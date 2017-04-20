@@ -44,4 +44,6 @@
     <string name="flight_detail_dialog_title_checked_in">Checked in to flight at %1$s from %2$s to %3$s. Your boarding position is %4$s at gate %5$s.</string>
     <string name="flight_detail_dialog_delete_button">Delete flight</string>
     <string name="flight_detail_dialog_force_checkin_button">Check in via browser</string>
+    <string name="title_activity_launch">LaunchActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

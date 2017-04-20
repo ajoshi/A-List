@@ -5,17 +5,22 @@ package biz.ajoshi.t1401654727.checkin.ui.frag;
  */
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -23,8 +28,13 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import biz.ajoshi.t1401654727.checkin.AlarmUtils;
 import biz.ajoshi.t1401654727.checkin.CityTimezoneTuple;
 import biz.ajoshi.t1401654727.checkin.R;
+import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
+import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.DatePickerFrag;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.TimePickerFrag;
 
 /**
  * A fragment that allows user to add a flight reminder
@@ -49,6 +59,12 @@ public class AddNewFlightFragment extends Fragment {
     public static final int TIMEZONE_INDEX = 0;
     public static final int CITY_INDEX = 1;
     public static final int MAX_INDEX = CITY_INDEX;
+
+    public interface NewFlightAddedListener {
+        void insertToContentResolver(Uri uri, ContentValues cv);
+        void onNewFlightAdded();
+    }
+    NewFlightAddedListener newFlightCallbacks;
 
     /**
      * Holds departure date and time
@@ -109,6 +125,13 @@ public class AddNewFlightFragment extends Fragment {
                 lNameView.setText(lName);
             }
         }
+        View submitButton = rootView.findViewById(R.id.submit);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createReminder(view);
+            }
+        });
 
         departCal = Calendar.getInstance();
         returnCal = Calendar.getInstance();
@@ -119,7 +142,29 @@ public class AddNewFlightFragment extends Fragment {
 
         setupCityAndTZView(rootView, R.id.departLoc, R.id.departureTZ, timeZones, TZ_DEPART_INDEX);
         setupCityAndTZView(rootView, R.id.arriveLoc, R.id.returnTZ, timeZones, TZ_RETURN_INDEX);
+        setDateClickListener(rootView, R.id.returnDate);
+        setDateClickListener(rootView, R.id.departureDate);
+        setTimeClickListener(rootView, R.id.returnTime);
+        setTimeClickListener(rootView, R.id.departureTime);
         return rootView;
+    }
+
+    private void setDateClickListener(View rootView, int id) {
+        rootView.findViewById(id).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickDate(view);
+            }
+        });
+    }
+
+    private void setTimeClickListener(View rootView, int id) {
+        rootView.findViewById(id).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickTime(view);
+            }
+        });
     }
 
     /**
@@ -135,7 +180,7 @@ public class AddNewFlightFragment extends Fragment {
      */
     private void setupCityAndTZView(final View rootView, final int autoCompleteTextViewId, final int tzTextViewId, final TimeZone[] tz, final int tzIndex) {
         AutoCompleteTextView a = (AutoCompleteTextView) rootView.findViewById(autoCompleteTextViewId);
-        ArrayAdapter cityListAdapter = new ArrayAdapter(getActivity(),
+        ArrayAdapter <CityTimezoneTuple> cityListAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line,
                 getTupleList(R.array.city_name_list));
         a.setAdapter(cityListAdapter);
@@ -146,9 +191,48 @@ public class AddNewFlightFragment extends Fragment {
                 final TextView tv = (TextView) rootView.findViewById(tzTextViewId);
                 tz[tzIndex] = TimeZone.getTimeZone(selection.tz);
                 tv.setText(tz[tzIndex].getDisplayName(false, TimeZone.SHORT));
+//                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.hideSoftInputFromWindow(tv.getWindowToken(), 0);
             }
         });
     }
+
+
+
+    /**
+     * Starts up a dialogfragment to choose departure/return date and sets the edittext to that
+     *
+     * @param dateView
+     */
+    public void pickDate(View dateView) {
+        hideKeyboard(dateView);
+        DialogFragment newFragment = new DatePickerFrag();
+        Bundle args = new Bundle();
+        args.putInt(DatePickerFrag.ARG_VIEW_ID, dateView.getId());
+        newFragment.setArguments(args);
+        newFragment.show(getChildFragmentManager(), "datePicker");
+    }
+
+    private void hideKeyboard(View view) {
+        view.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * Starts up a dialogfragment to choose departure/return time and sets the edittext to that
+     *
+     * @param timeView
+     */
+    public void pickTime(View timeView) {
+        hideKeyboard(timeView);
+        Bundle args = new Bundle();
+        args.putInt(TimePickerFrag.ARG_VIEW_ID, timeView.getId());
+        DialogFragment timePickerFragment = new TimePickerFrag();
+        timePickerFragment.setArguments(args);
+        timePickerFragment.show(getFragmentManager(), "timePicker");
+    }
+
 
     /**
      * Gets ArrayList of city names for use in Origin/Destination list
@@ -174,7 +258,7 @@ public class AddNewFlightFragment extends Fragment {
     private void getCityAndtimeZoneList(String[] cityTZList) {
         String[] tempArray;
         int arraySize = cityTZList.length;
-        tupleList = new ArrayList<CityTimezoneTuple>(arraySize);
+        tupleList = new ArrayList<>(arraySize);
         for (String tzAndCity : cityTZList) {
             tempArray = tzAndCity.split(CITY_TIMEZONE_SEPARATOR);
             if (tempArray.length > MAX_INDEX) {
@@ -190,6 +274,15 @@ public class AddNewFlightFragment extends Fragment {
         outState.putSerializable(STATE_RETURN_TIME, returnCal);
         outState.putSerializable(STATE_DEPARTURE_TZ, timeZones[TZ_DEPART_INDEX]);
         outState.putSerializable(STATE_RETURN_TZ, timeZones[TZ_RETURN_INDEX]);
+    }
+
+    @Override
+    public void onAttach(Activity ctx) {
+        if (!(ctx instanceof NewFlightAddedListener)) {
+            throw new ClassCastException("Parent must implement NewFlightAdder");
+        }
+        newFlightCallbacks = (NewFlightAddedListener) ctx;
+        super.onAttach(ctx);
     }
 
     @Override
@@ -354,5 +447,129 @@ public class AddNewFlightFragment extends Fragment {
                 timeZones[TZ_RETURN_INDEX].getDisplayName(false, TimeZone.SHORT));
     }
 
+    public void createReminder(View view) {
+        Activity currentActivity = getActivity();
+        if (currentActivity == null) {
+            return;
+        }
+        view = (View)view.getParent();
+        String firstName = getTextViewValueById(view, R.id.firstName);
+        String lastName = getTextViewValueById(view, R.id.lastName);
+        // Store the names in prefs so next time hopefully the user won't have to type in their name
+        SharedPreferences.Editor editor = currentActivity.getSharedPreferences(AddNewFlightFragment
+                .PREF_NAMES_FILENAME, Context.MODE_PRIVATE).edit();
+        editor.putString(AddNewFlightFragment.PREF_FIRST_NAME, firstName);
+        editor.putString(AddNewFlightFragment.PREF_LAST_NAME, lastName);
+        editor.apply();
 
+        //This is where I set the alarm for the service
+        long departMillis = getDepartCalMillis();
+        long returnMillis = getReturnCalMillis();
+
+        String confirmationCode = getTextViewValueById(view, R.id.confNum);
+        String origin = getTextViewValueById(view, R.id.departLoc);
+        String destination = getTextViewValueById(view, R.id.arriveLoc);
+        DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault());
+        if (addReminderToDB(departMillis, firstName, lastName, confirmationCode, origin, destination, getDepartTimeString(dateTimeFormat))) {
+            if (returnMillis > departMillis) {
+                // Only add a return flight if it's after the departure
+                // This lets us make sure that we don't set a reminder if there is no return
+                addReminderToDB(returnMillis, firstName, lastName, confirmationCode, destination, origin, getReturnTimeString(dateTimeFormat));
+                // Check in alarm set for flight at %s on %s and return at %3$s on %4$s
+                Toast.makeText(currentActivity, currentActivity.getString(R.string.entry_added_multiple_toast,
+                        getTextViewValueById(view, R.id.departureTime),
+                        getTextViewValueById(view, R.id.departureDate),
+                        getTextViewValueById(view, R.id.returnTime),
+                        getTextViewValueById(view, R.id.returnDate)),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                // Check in alarm set for flight at %s on %s
+                Toast.makeText(currentActivity, currentActivity.getString(R.string.entry_added_toast,
+                        getTextViewValueById(view, R.id.departureTime),
+                        getTextViewValueById(view, R.id.departureDate)),
+                        Toast.LENGTH_LONG).show();
+            }
+
+            //reset the frag
+            newFlightCallbacks.onNewFlightAdded();
+            AlarmUtils.resetAlarm(currentActivity, true);
+        } else {
+            Toast.makeText(currentActivity, R.string.entry_not_added_toast, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Inserts new data into the DB
+     *
+     * @param time      Time in ms when this flight takes off
+     * @param dTime     String form of time to be displayed
+     * @param firstName first name
+     * @param lastName  last name
+     * @param confCode  confirmation code
+     * @return true if succeeded, false otherwise
+     */
+    private boolean addReminderToDB(long time, String dTime, String firstName, String lastName, String confCode) {
+        if (firstName == null || lastName == null || confCode == null) {
+            return false;
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyDBHelper.COL_FNAME, firstName);
+        cv.put(MyDBHelper.COL_LNAME, lastName);
+        cv.put(MyDBHelper.COL_CONF_CODE, confCode);
+        cv.put(MyDBHelper.COL_TIME, time);
+        cv.put(MyDBHelper.COL_DISPLAY_TIME, dTime);
+        newFlightCallbacks.insertToContentResolver(EventProvider.AUTH_URI, cv);
+        return true;
+    }
+
+    /**
+     * Inserts new data into the DB
+     *
+     * @param time         Time in ms when this flight takes off
+     * @param firstName    first name
+     * @param lastName     last name
+     * @param confCode     confirmation code
+     * @param flightSource City from which the flight originates
+     * @param flightDest   City where the flight lands
+     * @param dTime        Localized time string for display purposes
+     * @return true if succeeded, false otherwise
+     */
+    private boolean addReminderToDB(long time, String firstName, String lastName, String confCode,
+                                    String flightSource, String flightDest, String dTime) {
+        if (firstName == null || lastName == null || confCode == null) {
+            return false;
+        }
+        if (flightSource == null || flightDest == null) {
+            return addReminderToDB(time, dTime, firstName, lastName, confCode);
+        }
+        ContentValues cv = new ContentValues();
+        cv.put(MyDBHelper.COL_FNAME, firstName);
+        cv.put(MyDBHelper.COL_LNAME, lastName);
+        cv.put(MyDBHelper.COL_CONF_CODE, confCode);
+        cv.put(MyDBHelper.COL_TIME, time);
+        cv.put(MyDBHelper.COL_DISPLAY_TIME, dTime);
+        cv.put(MyDBHelper.COL_FROM_PLACE, flightSource);
+        cv.put(MyDBHelper.COL_DEST_PLACE, flightDest);
+        newFlightCallbacks.insertToContentResolver(EventProvider.AUTH_URI, cv);
+        return true;
+    }
+
+    /**
+     * Takes a textview id and returns the text in it (or null)
+     *
+     * @param id Id of textview
+     * @return text in view or null
+     */
+    private String getTextViewValueById(View root, int id) {
+        String returnValue = null;
+        View v = root.findViewById(id);
+        if (v != null && v instanceof TextView) {
+            CharSequence tempVal = ((TextView) v).getText();
+            if (tempVal != null && tempVal.length() > 1) {
+                returnValue = tempVal.toString();
+            }
+        }
+        return returnValue;
+    }
 }

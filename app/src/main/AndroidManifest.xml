@@ -13,8 +13,20 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="biz.ajoshi.t1401654727.checkin.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <activity
+            android:name=".LaunchActivity"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,25 +38,29 @@
             android:name="biz.ajoshi.t1401654727.checkin.provider.EventProvider"
             android:authorities="biz.ajoshi.t1401654727.eventprovider"
             android:enabled="true"
-            android:exported="false"></provider>
+            android:exported="false" />
 
         <service
-            android:name=".services.SWCheckinService"
-            android:exported="false"></service>
+            android:name="biz.ajoshi.t1401654727.checkin.services.SWCheckinService"
+            android:exported="false" />
 
         <receiver
-            android:name=".receivers.BootBroadcastReceiver"
+            android:name="biz.ajoshi.t1401654727.checkin.alarm.receiver.BootBroadcastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receivers.WakefulReceiver" >
+        <receiver android:name="biz.ajoshi.t1401654727.checkin.alarm.receiver.PreciseAlarmReceiver">
             <intent-filter>
-                <action android:name="biz.ajoshi.t1401654727.receivers.WAKE_UP" />
+                <action android:name="biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_THIRTY" />
+                <action android:name="biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_TEN" />
+                <action android:name="biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_FIVE" />
+                <action android:name="biz.ajoshi.t1401654727.receivers.WAKE_UP_IN_ONE" />
+                <action android:name="biz.ajoshi.t1401654727.receivers.DONE" />
             </intent-filter>
         </receiver>
-    </application>
 
+    </application>
 </manifest>

@@ -1,10 +1,8 @@
-package biz.ajoshi.t1401654727.checkin.receivers;
+package biz.ajoshi.t1401654727.checkin.alarm.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
-import biz.ajoshi.t1401654727.checkin.MainActivity;
 
 /**
  * This resets the alarm upon boot, since alarms are reset upon reboot
@@ -13,6 +11,6 @@ import biz.ajoshi.t1401654727.checkin.MainActivity;
 public class BootBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        MainActivity.resetAlarm(context);
+        // Ask for all alarms that havent' gone off yet, set alarms for those, delete old ones
     }
 }

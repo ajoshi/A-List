@@ -2,9 +2,9 @@ package biz.ajoshi.t1401654727.checkin.ui.frag.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TimePicker;
