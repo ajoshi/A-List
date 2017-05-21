@@ -32,6 +32,7 @@ public class LaunchActivity extends FragmentActivity implements TimePickerFrag.O
             newFlightFrag = AddNewFlightFragment.newInstance(0);
             getSupportFragmentManager().beginTransaction().add(R.id.frag, listFragment).commit();
         }
+        AlarmUtils.resetAlarm(this);
     }
 
     @Override

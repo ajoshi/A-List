@@ -492,7 +492,7 @@ public class AddNewFlightFragment extends Fragment {
 
             //reset the frag
             newFlightCallbacks.onNewFlightAdded();
-            AlarmUtils.resetAlarm(currentActivity, true);
+            AlarmUtils.resetAlarm(currentActivity);
         } else {
             Toast.makeText(currentActivity, R.string.entry_not_added_toast, Toast.LENGTH_LONG).show();
         }
