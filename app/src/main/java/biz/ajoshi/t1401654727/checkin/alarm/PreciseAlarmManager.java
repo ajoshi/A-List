@@ -28,6 +28,7 @@ public class PreciseAlarmManager {
     public void setServiceAlarm(Context ctx, long alarmTime, Intent alarmIntent, int requestCode, boolean isPrecise) {
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
         if (isPrecise) {
+            // precision is expensive- we need to set multiple alarms
             setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_HALF_HOUR_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_THIRTY_MINUTES);
             setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_TEN_MIN_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_TEN_MINUTES);
             setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_FIVE_MIN_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_FIVE_MINUTES);

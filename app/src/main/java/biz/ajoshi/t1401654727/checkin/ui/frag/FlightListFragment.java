@@ -1,13 +1,9 @@
 package biz.ajoshi.t1401654727.checkin.ui.frag;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -25,13 +21,15 @@ import biz.ajoshi.t1401654727.checkin.FlightListElement;
 import biz.ajoshi.t1401654727.checkin.R;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
-import biz.ajoshi.t1401654727.checkin.services.SWCheckinService;
 import biz.ajoshi.t1401654727.checkin.ui.FlightRecycleViewCursorAdapter;
+import biz.ajoshi.t1401654727.checkin.ui.frag.dialog.FlightOptionsDialog;
 
 /**
  * A fragment representing a list of flights.
  */
-public class FlightListFragment extends Fragment implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>, FlightRecycleViewCursorAdapter.FlightItemClickListener {
+public class FlightListFragment extends Fragment implements
+        android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>,
+        FlightRecycleViewCursorAdapter.FlightItemClickListener, FlightOptionsDialog.ClickListener {
 
     /**
      * Interface that will somehow add a new flight when asked to do so
@@ -103,13 +101,13 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
      * @param data FlightListElement containing the data for this element
      * @return String title of click dialog
      */
-    private String getTitleFromListItem(FlightListElement data) {
+    private String getTitleFromListItem(FlightListElement data, Context ctx) {
         String title;
         String timeString = data.displayTime; /// dateFormat.format(cal.getTime());
         boolean checkedIn = data.hasCheckedIn;
         if (checkedIn) {
             //time, origin, destination, position, gate
-            title = getString(R.string.flight_detail_dialog_title_checked_in, timeString,
+            title = ctx.getString(R.string.flight_detail_dialog_title_checked_in, timeString,
                     data.origin,
                     data.destination,
                     data.position,
@@ -120,18 +118,18 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
             int attempts = data.attempts;
             if (attempts > 0) {
                 // we've  tried to check in before, but failed
-                String titlePart1 = getString(R.string.flight_detail_dialog_title_not_checked_in, timeString,
+                String titlePart1 = ctx.getString(R.string.flight_detail_dialog_title_not_checked_in, timeString,
                         data.origin,
                         data.destination);
-                String titlePart2 = getString(R.string.flight_detail_dialog_title_auto_checkin_failed, attempts);
-                title = getString(R.string.flight_detail_dialog_title_not_checked_in_auto_checkin_failed, titlePart1, titlePart2);
+                String titlePart2 = ctx.getString(R.string.flight_detail_dialog_title_auto_checkin_failed, attempts);
+                title = ctx.getString(R.string.flight_detail_dialog_title_not_checked_in_auto_checkin_failed, titlePart1, titlePart2);
             } else {
                 String origin = data.origin;
                 String dest = data.destination;
                 if (origin == null || dest == null) {
-                    title = getString(R.string.flight_detail_dialog_title_not_checked_in_no_locations, timeString);
+                    title = ctx.getString(R.string.flight_detail_dialog_title_not_checked_in_no_locations, timeString);
                 } else {
-                    title = getString(R.string.flight_detail_dialog_title_not_checked_in, timeString,
+                    title = ctx.getString(R.string.flight_detail_dialog_title_not_checked_in, timeString,
                             origin, dest);
                 }
             }
@@ -177,41 +175,20 @@ public class FlightListFragment extends Fragment implements android.support.v4.a
 
     @Override
     public void flightItemClicked(FlightListElement element, final int index) {
-        final String title = getTitleFromListItem(element);
-
-        final String flightId = element.id;
-        final String fname = element.fName;
-        final String lname = element.lName;
-        final String ccode = element.confCode;
         // right now use the standard 2 button dialog, use custom layout if anything else can be done
-
-        DialogFragment deleteOrCheckinDialog = new DialogFragment() {
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                // Use the Builder class for convenient dialog construction
-                final Activity act = getActivity();
-                AlertDialog.Builder builder = new AlertDialog.Builder(act);
-                builder.setMessage(title)
-                        .setPositiveButton(R.string.flight_detail_dialog_delete_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // Delete this entry
-                                //TODO confirmation dialog. yay, dialog spam
-                                act.getContentResolver().delete(EventProvider.AUTH_URI, MyDBHelper.COL_ID + " = " + flightId, null);
-                                resetList();
-                            }
-                        })
-                        .setNegativeButton(R.string.flight_detail_dialog_force_checkin_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // force check in for given id
-                                Intent checkinViaWebIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(SWCheckinService.SOUTHWEST_CHECKIN_URL1, ccode, fname, lname)));
-                                startActivity(checkinViaWebIntent);
-                            }
-                        });
-                // Create the AlertDialog object and return it
-                return builder.create();
-            }
-        };
+        DialogFragment deleteOrCheckinDialog =
+                FlightOptionsDialog.getInstance(getTitleFromListItem(element, getContext()), element);
+        /*
+         * This is a hack to keep from going from DialogFrag -> Activity -> Frag
+         */
+        deleteOrCheckinDialog.setTargetFragment(this, 1);
         deleteOrCheckinDialog.show(getFragmentManager(), "FlightListFragment.deleteOrCheckinDialog");
+    }
+
+    @Override
+    public void deleteFlightWithId(String flightId) {
+        getActivity().getContentResolver().delete(EventProvider.AUTH_URI, MyDBHelper.COL_ID + " = " + flightId, null);
+        resetList();
     }
 
     public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
