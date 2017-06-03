@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import biz.ajoshi.t1401654727.checkin.ui.frag.AddNewFlightFragment;
@@ -22,15 +21,18 @@ public class LaunchActivity extends FragmentActivity implements TimePickerFrag.O
     FlightListFragment listFragment;
     AddNewFlightFragment newFlightFrag;
 
+    private static final String TAG_LIST_FRAG = "flightList";
+    private static final String TAG_NEW_FLIGHTS_FRAG = "addNewFlights";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
-        Fragment currentFrag = getSupportFragmentManager().findFragmentById(R.id.frag);
-        if (currentFrag == null || listFragment == null) {
+        listFragment = (FlightListFragment) getSupportFragmentManager().findFragmentByTag(TAG_LIST_FRAG);
+        newFlightFrag = (AddNewFlightFragment) getSupportFragmentManager().findFragmentByTag(TAG_NEW_FLIGHTS_FRAG);
+        if (listFragment == null) {
             listFragment = FlightListFragment.newInstance();
-            newFlightFrag = AddNewFlightFragment.newInstance(0);
-            getSupportFragmentManager().beginTransaction().add(R.id.frag, listFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.frag, listFragment, TAG_LIST_FRAG).commit();
         }
         AlarmUtils.resetAlarm(this);
     }
@@ -66,8 +68,10 @@ public class LaunchActivity extends FragmentActivity implements TimePickerFrag.O
 
     @Override
     public void addNewFlight() {
+        // if we use the same instance of newFlightFrag, then user can never clear out the entire form
+        newFlightFrag = AddNewFlightFragment.newInstance(0);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frag, newFlightFrag)
+                .replace(R.id.frag, newFlightFrag, TAG_NEW_FLIGHTS_FRAG)
                 .addToBackStack(null).commit();
     }
 
