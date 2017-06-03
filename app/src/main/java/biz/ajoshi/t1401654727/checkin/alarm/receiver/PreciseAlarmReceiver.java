@@ -25,25 +25,31 @@ public class PreciseAlarmReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
        // makeNot(context, intent.getAction());
-            if (ACTION_ONE_MIN_TO_WAKEUP.equals(intent.getAction())) {
-                PowerManager pm = (PowerManager)context.getSystemService(
-                        Context.POWER_SERVICE);
-                mWakeLock = pm.newWakeLock(
-                        PowerManager.PARTIAL_WAKE_LOCK,
-                        "PreciseAlarmReceiver");
-                mWakeLock.acquire(AlarmConstants.MS_IN_FIVE_MINUTES); // Should never take longer
-            } else if (ACTION_TURN_OFF_LOCK.equals(intent.getAction())) {
-                if (mWakeLock != null) {
-                    mWakeLock.release();
-                }
+        if (ACTION_ONE_MIN_TO_WAKEUP.equals(intent.getAction())) {
+            PowerManager pm = (PowerManager)context.getSystemService(
+                    Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    "PreciseAlarmReceiver");
+            mWakeLock.acquire(AlarmConstants.MS_IN_FIVE_MINUTES); // Should never take longer
+        } else if (ACTION_TURN_OFF_LOCK.equals(intent.getAction())) {
+            if (mWakeLock != null) {
+                mWakeLock.release();
             }
-            PreciseAlarmReceiver.completeWakefulIntent(intent);
+        }
+        PreciseAlarmReceiver.completeWakefulIntent(intent);
     }
-    private void makeNot(Context ctx, String huh) {
+
+    /**
+     * This is just for debugging. Make a notification so I can confirm that alarms are being created
+     * @param ctx
+     * @param notificationText
+     */
+    private void makeNot(Context ctx, String notificationText) {
         long time = System.currentTimeMillis();
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
-                        .setContentText(time + huh.substring(33))
+                        .setContentText(time + notificationText.substring(33))
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setAutoCancel(true);
         // Gets an instance of the NotificationManager service

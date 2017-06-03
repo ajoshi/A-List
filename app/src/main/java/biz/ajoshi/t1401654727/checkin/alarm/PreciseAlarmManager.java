@@ -13,34 +13,49 @@ import biz.ajoshi.t1401654727.checkin.alarm.receiver.PreciseAlarmReceiver;
  */
 public class PreciseAlarmManager {
 
-    public static final String EXTRA_TIME_YO = "timeYo";
+    public static final String EXTRA_ALARM_TIME = "biz.ajoshi.t1401654727.checkin.alarm.actualAlarmTime";
 
     /**
      * Sets an alarm to go off at the requested time unless Xperia device's Standby mode is active.
      * If a precise alarm is set, it will set extra
      * alarms and hold a 1 minute wakelock to ensure the alarm fire within a few seconds of the desired time
      * @param ctx Context to use
-     * @param alarmTime Time when the alarm should go off
-     * @param alarmIntent Broadcast Intent to fire when the alarm goes off
-     * @param requestCode requestcode for this alarm. Should be different for each alarm
-     * @param isPrecise if false, delays of a few seconds up to a minute are acceptable
+     * @param alarmData All the relevant alarm data
      */
-    public void setServiceAlarm(Context ctx, long alarmTime, Intent alarmIntent, int requestCode, boolean isPrecise) {
+    public void setServiceAlarm(Context ctx, AlarmData alarmData) {
+        storeAlarmInDB(ctx, alarmData);
+        setServiceAlarmDontPersist(ctx, alarmData);
+    }
+
+
+    /**
+     * Sets an alarm to go off at the requested time unless Xperia device's Standby mode is active.
+     * If a precise alarm is set, it will set extra
+     * alarms and hold a 1 minute wakelock to ensure the alarm fire within a few seconds of the desired time..
+     * Will NOT perisist to DB. Should be called if alarm has already been persisted
+     * @param ctx Context to use
+     * @param alarmData All the relevant alarm data
+     */
+    public void setServiceAlarmDontPersist(Context ctx, AlarmData alarmData) {
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (isPrecise) {
+        if (alarmData.isPrecise) {
             // precision is expensive- we need to set multiple alarms
-            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_HALF_HOUR_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_THIRTY_MINUTES);
-            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_TEN_MIN_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_TEN_MINUTES);
-            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_FIVE_MIN_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_FIVE_MINUTES);
-            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_ONE_MIN_TO_WAKEUP, requestCode), alarmTime - AlarmConstants.MS_IN_ONE_MINUTE);
-            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_TURN_OFF_LOCK, requestCode), alarmTime + AlarmConstants.MS_IN_ONE_MINUTE);
+            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_HALF_HOUR_TO_WAKEUP,
+                    alarmData.requestcode), alarmData.time - AlarmConstants.MS_IN_THIRTY_MINUTES);
+            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_TEN_MIN_TO_WAKEUP,
+                    alarmData.requestcode), alarmData.time - AlarmConstants.MS_IN_TEN_MINUTES);
+            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_FIVE_MIN_TO_WAKEUP,
+                    alarmData.requestcode), alarmData.time - AlarmConstants.MS_IN_FIVE_MINUTES);
+            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_ONE_MIN_TO_WAKEUP,
+                    alarmData.requestcode), alarmData.time - AlarmConstants.MS_IN_ONE_MINUTE);
+            setExactAlarm(am, getPIntentForAlarm(ctx, PreciseAlarmReceiver.ACTION_TURN_OFF_LOCK,
+                    alarmData.requestcode), alarmData.time + AlarmConstants.MS_IN_ONE_MINUTE);
         }
         // Set the real alarm as well
-        alarmIntent.putExtra(EXTRA_TIME_YO, alarmTime);
-        PendingIntent pendingIntent = PendingIntent.getService(ctx, requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        storeAlarmInDB(ctx, alarmTime, alarmIntent, requestCode, isPrecise);
-        // TODO store intent in db with the requestcode for the given time
-        setExactAlarm(am, pendingIntent, alarmTime);
+        alarmData.alarmIntent.putExtra(EXTRA_ALARM_TIME, alarmData.time);
+        PendingIntent pendingIntent = PendingIntent.getService(ctx, alarmData.requestcode,
+                alarmData.alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        setExactAlarm(am, pendingIntent, alarmData.time);
     }
 
     /**
@@ -78,8 +93,8 @@ public class PreciseAlarmManager {
         }
     }
 
-    public boolean storeAlarmInDB(Context ctx, long time, Intent intent, int requestCode, boolean isPrecise) {
+    public boolean storeAlarmInDB(Context ctx, AlarmData alarmData) {
         AlarmDBHelper dbHelper = new AlarmDBHelper(ctx);
-        return dbHelper.insert(time, intent, requestCode, isPrecise) != -1;
+        return dbHelper.insert(alarmData) != -1;
     }
 }

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.widget.Toast;
 
+import biz.ajoshi.t1401654727.checkin.alarm.AlarmData;
 import biz.ajoshi.t1401654727.checkin.alarm.PreciseAlarmManager;
 import biz.ajoshi.t1401654727.checkin.db.MyDBHelper;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
@@ -65,6 +66,7 @@ public class AlarmUtils {
         */
         long alarmTime = time - Constants.MS_IN_DAY;
         PreciseAlarmManager am = new PreciseAlarmManager();
-        am.setServiceAlarm(ctx, alarmTime, SWCheckinService.IntentForCheckingIn(ctx, fName, lName, cCode, id), 0, true);
+        AlarmData alarmData = new AlarmData(SWCheckinService.IntentForCheckingIn(ctx, fName, lName, cCode, id), true, alarmTime, 0);
+        am.setServiceAlarm(ctx, alarmData);
     }
 }

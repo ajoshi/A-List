@@ -30,7 +30,7 @@ import biz.ajoshi.t1401654727.checkin.network.HtmlReader;
 import biz.ajoshi.t1401654727.checkin.network.Network;
 import biz.ajoshi.t1401654727.checkin.provider.EventProvider;
 
-import static biz.ajoshi.t1401654727.checkin.alarm.PreciseAlarmManager.EXTRA_TIME_YO;
+import static biz.ajoshi.t1401654727.checkin.alarm.PreciseAlarmManager.EXTRA_ALARM_TIME;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous network requests in
@@ -64,23 +64,8 @@ public class SWCheckinService extends IntentService {
     }
 
     /**
-     * Starts this service to Check in with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    public static void startCheckingIn(Context context, String fname, String lname,
-                                       String confCode, String id) {
-        Intent intent = new Intent(context, SWCheckinService.class);
-        intent.setAction(ACTION_CHECK_IN);
-        intent.putExtra(EXTRA_FIRST_NAME, fname);
-        intent.putExtra(EXTRA_LAST_NAME, lname);
-        intent.putExtra(EXTRA_CONF_CODE, confCode);
-        intent.putExtra(EXTRA_ID, id);
-        context.startService(intent);
-    }
-
-    /**
+     * Gets the intent to start the check in service. If the service is already performing a task
+     * (checking in), this action will be queued
      * @param context  Context used for creating the intent
      * @param fname    first name of passenger
      * @param lname    last name of passenger
@@ -107,7 +92,7 @@ public class SWCheckinService extends IntentService {
         PowerManager.WakeLock wl = pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
                 "SWCheckinService");
-        wl.acquire(Constants.MS_IN_THREE_HOURS/60); // Should never take longer 1487822168492
+        wl.acquire(Constants.MS_IN_THREE_HOURS/60); // Should never take longer than 3 minutes
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_CHECK_IN.equals(action)) {
@@ -115,7 +100,7 @@ public class SWCheckinService extends IntentService {
                 final String lName = intent.getStringExtra(EXTRA_LAST_NAME);
                 final String cCode = intent.getStringExtra(EXTRA_CONF_CODE);
                 final String id = intent.getStringExtra(EXTRA_ID);
-                final long time = intent.getLongExtra(EXTRA_TIME_YO, 0);
+                final long time = intent.getLongExtra(EXTRA_ALARM_TIME, 0);
                 handleActionCheckin(fName, lName, cCode, id, time);
             }
         }
